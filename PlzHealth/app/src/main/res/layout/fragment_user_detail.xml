@@ -67,12 +67,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="3">
-            <CheckBox android:text="난류" /> <CheckBox android:text="우유" />
-            <CheckBox android:text="메밀" /> <CheckBox android:text="땅콩" />
-            <CheckBox android:text="대두" /> <CheckBox android:text="밀" />
-            <CheckBox android:text="고등어" /> <CheckBox android:text="게" />
-            <CheckBox android:text="새우" /> <CheckBox android:text="복숭아" />
-            <CheckBox android:text="토마토" /> <CheckBox android:text="호두" />
+            <CheckBox android:text="난류" /> <CheckBox android:text="유제품" />
+            <CheckBox android:text="곡류(밀)" /> <CheckBox android:text="콩류" />
+            <CheckBox android:text="견과류" /> <CheckBox android:text="해산물" />
+            <CheckBox android:text="육류" /> <CheckBox android:text="과일류" />
+            <CheckBox android:text="생선류" />
         </GridLayout>
 
         <TextView
@@ -86,9 +85,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="3">
-            <CheckBox android:id="@+id/cbCold" android:text="감기" />
-            <CheckBox android:id="@+id/cbFlu" android:text="독감" />
             <CheckBox android:id="@+id/cbDiabetes" android:text="당뇨" />
+            <CheckBox android:id="@+id/cbHypertension" android:text="고혈압" />
+            <CheckBox android:id="@+id/cbHyperlipidemia" android:text="고지혈증" />
+            <CheckBox android:id="@+id/cbFat" android:text="비만" />
         </GridLayout>
 
         <TextView
