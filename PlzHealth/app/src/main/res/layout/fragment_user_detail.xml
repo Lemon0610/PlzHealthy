@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etDetailName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="이름 입력"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/etDetailBirth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="생년월일 (예: 19950520)"
+            android:inputType="number"
+            android:maxLength="8"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvDisplayAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="연산된 나이: - 세"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="성별"
+            android:textStyle="bold"/>
+        <RadioGroup
+            android:id="@+id/rgGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbMale"
+                android:text="남성"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:id="@+id/rbFemale"
+                android:text="여성"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알러지 선택"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+        <GridLayout
+            android:id="@+id/gridAllergies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+            <CheckBox android:text="난류" /> <CheckBox android:text="우유" />
+            <CheckBox android:text="메밀" /> <CheckBox android:text="땅콩" />
+            <CheckBox android:text="대두" /> <CheckBox android:text="밀" />
+            <CheckBox android:text="고등어" /> <CheckBox android:text="게" />
+            <CheckBox android:text="새우" /> <CheckBox android:text="복숭아" />
+            <CheckBox android:text="토마토" /> <CheckBox android:text="호두" />
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="질병 선택"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+        <GridLayout
+            android:id="@+id/gridDiseases"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+            <CheckBox android:id="@+id/cbCold" android:text="감기" />
+            <CheckBox android:id="@+id/cbFlu" android:text="독감" />
+            <CheckBox android:id="@+id/cbDiabetes" android:text="당뇨" />
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기타 메모"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+        <EditText
+            android:id="@+id/etDetailMemo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="추가 정보를 입력하세요"
+            android:gravity="top"
+            android:minLines="3"
+            android:background="@android:drawable/editbox_background"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="정보 저장하기"
+            android:layout_marginTop="24dp" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="정보 삭제하기"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
