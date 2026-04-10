@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvPageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="대체 식품 추천"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvPageDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            android:text="건강 점수를 기준으로 추천 식품을 표시합니다."
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvFood1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="추천 식품 1"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReason1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="추천 이유 1" />
+
+        <TextView
+            android:id="@+id/tvFood2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="추천 식품 2"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReason2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="추천 이유 2" />
+
+        <TextView
+            android:id="@+id/tvFood3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="추천 식품 3"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReason3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="추천 이유 3" />
+
+    </LinearLayout>
+</ScrollView>
