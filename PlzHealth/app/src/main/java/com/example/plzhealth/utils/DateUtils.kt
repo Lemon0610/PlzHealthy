@@ -1,28 +1,43 @@
 package com.example.plzhealth.utils
 
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 object DateUtils {
-    fun calculateAge(birthDate: String?): String {
-        if (birthDate.isNullOrBlank()) return "미입력"
 
-        val cleanDate = birthDate.replace(Regex("[^0-9]"), "")
-        if (cleanDate.length < 8) return "형식 오류"
+    fun calculateAge(birthDate: String): Int {
+        val today = LocalDate.now()
 
-        try {
-            val year = cleanDate.substring(0, 4).toInt()
-            val month = cleanDate.substring(4, 6).toInt()
-            val day = cleanDate.substring(6, 8).toInt()
+        val formatters = listOf(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            DateTimeFormatter.ofPattern("yyyy.MM.dd"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+            DateTimeFormatter.ofPattern("yyyyMMdd")
+        )
 
-            val today = Calendar.getInstance()
-            val currentYear = today.get(Calendar.YEAR)
-            val currentMonth = today.get(Calendar.MONTH) + 1
-            val currentDay = today.get(Calendar.DAY_OF_MONTH)
-            val age = currentYear - year + 1
-
-            return "${age}세"
-        } catch (e: Exception) {
-            return "계산 불가"
+        for (formatter in formatters) {
+            try {
+                val birth = LocalDate.parse(birthDate, formatter)
+                return Period.between(birth, today).years
+            } catch (_: Exception) {
+            }
         }
+
+        return 0
+    }
+
+    fun getAgeGroup(age: Int): String {
+        return when {
+            age <= 11 -> "아동(6-11)"
+            age in 12..18 -> "청소년(12-18)"
+            age in 19..64 -> "성인"
+            else -> "노인(65+)"
+        }
+    }
+
+    fun getAgeGroupFromBirthDate(birthDate: String): String {
+        val age = calculateAge(birthDate)
+        return getAgeGroup(age)
     }
 }
