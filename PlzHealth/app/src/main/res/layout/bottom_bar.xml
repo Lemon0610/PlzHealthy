@@ -4,7 +4,8 @@
     android:id="@+id/bottomBarRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <View
         android:layout_width="match_parent"
@@ -13,108 +14,80 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <TextView
             android:id="@+id/btnHealth"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/outline_ecg_heart_24"
-                app:tint="#333333"/>
+            android:text="@string/btnHealth"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="건강점수"
-                android:textSize="11sp"
-                android:textColor="#333333"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
+            app:drawableTopCompat="@drawable/outline_ecg_heart_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack"/>
 
-        <LinearLayout
+        <TextView
             android:id="@+id/btnToday"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/outline_fork_spoon_24"
-                app:tint="#333333"/>
+            android:text="@string/btnToday"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="오늘의 식단"
-                android:textSize="11sp"
-                android:textColor="#333333"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
+            app:drawableTopCompat="@drawable/outline_fork_spoon_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
 
-        <LinearLayout
+        <TextView
             android:id="@+id/btnSearch"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/outline_search_24"
-                app:tint="#333333"/>
+            android:text="@string/btnSearch"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="검색"
-                android:textSize="11sp"
-                android:textColor="#333333"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
+            app:drawableTopCompat="@drawable/outline_search_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
 
-        <LinearLayout
+        <TextView
             android:id="@+id/btnMypage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/outline_home_24"
-                app:tint="#333333"/>
+            android:text="@string/btnMypage"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="마이페이지"
-                android:textSize="11sp"
-                android:textColor="#333333"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
+            app:drawableTopCompat="@drawable/outline_home_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
 
     </LinearLayout>
 </LinearLayout>

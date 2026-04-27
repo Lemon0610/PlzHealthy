@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,19 +13,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="오늘의 식단"
+            android:text="@string/btnToday"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#333333" />
+            android:textColor="@color/GoodBlack" />
 
         <TextView
             android:id="@+id/tvTodayDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="2026년 04월 13일"
+            android:text="@string/TodayDate"
             android:textSize="16sp"
-            android:textColor="#666666" />
+            android:textColor="@color/LightBlack" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +34,8 @@
             android:background="@drawable/bg_summary_box"
             android:elevation="2dp"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:baselineAligned="false" >
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -46,13 +47,13 @@
                     android:id="@+id/tvTotalKcal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/number"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="총 칼로리"
+                    android:text="@string/tvTotalKcal"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -66,13 +67,13 @@
                     android:id="@+id/tvFoodCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/number"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="담은 식품"
+                    android:text="@string/tvFoodCount"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -86,14 +87,14 @@
                     android:id="@+id/tvAverageScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/number"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#4CAF50" />
+                    android:textColor="@color/MainGreen" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="건강 점수"
+                    android:text="@string/tvAverageScore"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
@@ -106,24 +107,32 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="아침"
+                    android:layout_weight="1"
+                    android:text="@string/morning"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1" />
+
                 <TextView
                     android:id="@+id/btnAddBreakfast"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="+ 식품 추가"
-                    android:textColor="#2196F3"
-                    android:textSize="14sp" />
-            </RelativeLayout>
+                    android:layout_marginStart="8dp"
+                    android:text="@string/AddMeal"
+                    android:textColor="@color/MainGreen"
+                    android:textSize="14sp"
+                    android:padding="4dp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvBreakfast"
@@ -140,24 +149,32 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="점심"
+                    android:layout_weight="1"
+                    android:text="@string/lunch"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1" />
+
                 <TextView
                     android:id="@+id/btnAddLunch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="+ 식품 추가"
-                    android:textColor="#2196F3"
-                    android:textSize="14sp" />
-            </RelativeLayout>
+                    android:layout_marginStart="8dp"
+                    android:text="@string/AddMeal"
+                    android:textColor="@color/MainGreen"
+                    android:textSize="14sp"
+                    android:padding="4dp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLunch"
@@ -174,24 +191,32 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="저녁"
+                    android:layout_weight="1"
+                    android:text="@string/dinner"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1" />
+
                 <TextView
                     android:id="@+id/btnAddDinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="+ 식품 추가"
-                    android:textColor="#2196F3"
-                    android:textSize="14sp" />
-            </RelativeLayout>
+                    android:layout_marginStart="8dp"
+                    android:text="@string/AddMeal"
+                    android:textColor="@color/MainGreen"
+                    android:textSize="14sp"
+                    android:padding="4dp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDinner"

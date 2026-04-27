@@ -1,7 +1,7 @@
 package com.example.plzhealth
 
 import android.os.Bundle
-import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -23,10 +23,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         //하단바
-        val btnHealth = findViewById<LinearLayout>(R.id.btnHealth)
-        val btnToday = findViewById<LinearLayout>(R.id.btnToday)
-        val btnSearch = findViewById<LinearLayout>(R.id.btnSearch)
-        val btnMypage = findViewById<LinearLayout>(R.id.btnMypage)
+        val btnHealth = findViewById<TextView>(R.id.btnHealth)
+        val btnToday = findViewById<TextView>(R.id.btnToday)
+        val btnSearch = findViewById<TextView>(R.id.btnSearch)
+        val btnMypage = findViewById<TextView>(R.id.btnMypage)
 
         btnHealth.setOnClickListener {
             replaceFragment(HealthPointFragment())

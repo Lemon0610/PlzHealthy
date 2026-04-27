@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,10 +14,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="마이페이지"
+            android:text="@string/btnMypage"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/GoodBlack"
             android:layout_marginBottom="16dp"/>
 
         <androidx.cardview.widget.CardView
@@ -38,7 +38,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="내 정보"
+                    android:text="@string/myInfo"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
 
@@ -46,21 +46,21 @@
                     android:id="@+id/tvMyName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="이름: 건강해조"
+                    android:text="@string/tvMyName"
                     android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tvMyAgeGender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="나이: 21세 (여성)"
+                    android:text="@string/tvMyAgeGender"
                     android:layout_marginTop="4dp"/>
 
                 <TextView
                     android:id="@+id/tvMyAllergies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="알러지: 땅콩, 복숭아, 우유"
+                    android:text="@string/tvMyAllergies"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -73,9 +73,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="구성원"
+                android:text="@string/family"
                 android:textStyle="bold"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:layout_marginBottom="8dp"/>
 
             <View
@@ -87,7 +87,7 @@
                 android:id="@+id/memberAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="구성원 추가"
+                android:text="@string/addFamily"
                 android:textColor="@color/black"
                 android:backgroundTint="@color/white"/>
         </LinearLayout>
