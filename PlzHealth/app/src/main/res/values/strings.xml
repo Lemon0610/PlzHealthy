@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PlzHealth</string>
+
+    <string-array name="meal_types">
+        <item>아침</item>
+        <item>점심</item>
+        <item>저녁</item>
+    </string-array>
+</resources>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- 제목 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="구성원 추가"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- 이름 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름 *"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="6dp"/>
+
+        <EditText
+            android:id="@+id/etDetailName"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="이름 입력"
+            android:textColorHint="#BBBBBB"
+            android:inputType="text"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/bg_search_box"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 생년월일 + 나이 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="생년월일"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="6dp"/>
+
+        <EditText
+            android:id="@+id/etDetailBirth"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="생년월일 (예: 19950520)"
+            android:textColorHint="#BBBBBB"
+            android:inputType="number"
+            android:maxLength="8"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/bg_search_box"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvDisplayAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="연산된 나이: - 세"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 성별 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="성별"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/rgGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <RadioButton
+                android:id="@+id/rbMale"
+                android:text="남성"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="#4CAF50"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:layout_marginEnd="16dp"/>
+
+            <RadioButton
+                android:id="@+id/rbFemale"
+                android:text="여성"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="#4CAF50"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"/>
+
+        </RadioGroup>
+
+        <!-- 알레르기 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알레르기"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- 알레르기 태그 칩 (FlexboxLayout 대신 wrap되는 LinearLayout 조합) -->
+        <LinearLayout
+            android:id="@+id/gridAllergies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+
+            <!-- 1행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <CheckBox android:id="@+id/cbAllergyEgg"    android:text="난류"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyMilk"   android:text="우유"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyBuckwheat" android:text="메밀" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyPeanut" android:text="땅콩"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+            <!-- 2행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <CheckBox android:id="@+id/cbAllergySoy"     android:text="대두"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyWheat"   android:text="밀"      android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyMackerel" android:text="고등어" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyCrab"    android:text="게"      android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+            <!-- 3행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <CheckBox android:id="@+id/cbAllergyShrimp"  android:text="새우"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyPork"    android:text="돼지고기" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyPeach"   android:text="복숭아"  android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyWalnut"  android:text="호두"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+            <!-- 4행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <CheckBox android:id="@+id/cbAllergyChicken" android:text="닭고기"  android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergyBeef"    android:text="쇠고기"  android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 건강 상태 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="건강 상태"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/gridDiseases"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="28dp">
+
+            <!-- 1행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <CheckBox android:id="@+id/cbHypertension"   android:text="고혈압"  android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbDiabetes"       android:text="당뇨"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbHyperlipidemia" android:text="고지혈증" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbFat"            android:text="통풍"    android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+            <!-- 2행 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <CheckBox android:id="@+id/cbKidney"         android:text="신장질환" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+                <CheckBox android:id="@+id/cbAllergy"        android:text="알레르기" android:layout_width="wrap_content" android:layout_height="36dp" android:button="@null" android:background="@drawable/bg_category_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:gravity="center" android:textSize="13sp" android:textColor="#333333" android:layout_marginEnd="8dp" android:buttonTint="#4CAF50"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 추가하기 버튼 -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="추가하기"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="삭제하기"
+            android:textSize="16sp"
+            android:textColor="#F44336"
+            android:backgroundTint="#FFFFFF"
+            android:strokeColor="#F44336"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
