@@ -19,13 +19,13 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="뒤로가기"/>
+            android:contentDescription="@string/Back"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="식품 상세정보"
+            android:text="@string/foodDetail"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginStart="8dp"/>
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="#212121"
+                android:textColor="@color/GoodBlack"
                 android:layout_marginBottom="12dp"/>
 
             <!-- 건강점수 카드 -->
@@ -72,9 +72,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="건강점수"
+                        android:text="@string/btnHealth"
                         android:textSize="13sp"
-                        android:textColor="#9E9E9E"/>
+                        android:textColor="@color/LightGray"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -86,17 +86,17 @@
                             android:id="@+id/tvHealthScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="82"
+                            android:text="@string/number"
                             android:textSize="32sp"
                             android:textStyle="bold"
-                            android:textColor="#4CAF50"/>
+                            android:textColor="@color/MainGreen"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="/ 100"
+                            android:text="@string/percentage"
                             android:textSize="14sp"
-                            android:textColor="#9E9E9E"
+                            android:textColor="@color/LightGray"
                             android:layout_marginStart="4dp"/>
 
                     </LinearLayout>
@@ -107,11 +107,11 @@
                     android:id="@+id/tvHealthScoreCircle"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:text="82"
+                    android:text="@string/number"
                     android:gravity="center"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#4CAF50"
+                    android:textColor="@color/MainGreen"
                     android:background="@drawable/bg_score_circle"/>
 
             </LinearLayout>
@@ -121,7 +121,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -139,14 +140,14 @@
                         android:layout_height="wrap_content"
                         android:textSize="22sp"
                         android:textStyle="bold"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="칼로리(Kcal)"
+                        android:text="@string/Kcal"
                         android:textSize="12sp"
-                        android:textColor="#9E9E9E"/>
+                        android:textColor="@color/LightGray"/>
 
                 </LinearLayout>
 
@@ -166,14 +167,14 @@
                         android:layout_height="wrap_content"
                         android:textSize="22sp"
                         android:textStyle="bold"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="단백질(g)"
+                        android:text="@string/danger"
                         android:textSize="12sp"
-                        android:textColor="#9E9E9E"/>
+                        android:textColor="@color/LightGray"/>
 
                 </LinearLayout>
 
@@ -191,18 +192,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="상세정보"
+                    android:text="@string/detailInfo"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="#212121"
+                    android:textColor="@color/GoodBlack"
                     android:layout_marginBottom="4dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1회 제공량: 100g"
+                    android:text="@string/kijun"
                     android:textSize="12sp"
-                    android:textColor="#9E9E9E"
+                    android:textColor="@color/LightGray"
                     android:layout_marginBottom="12dp"/>
 
                 <!-- 나트륨 -->
@@ -216,9 +217,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="나트륨"
+                        android:text="@string/Na"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <ProgressBar
                         android:id="@+id/pbSodium"
@@ -236,7 +237,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -251,9 +252,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="지방"
+                        android:text="@string/Fat"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <ProgressBar
                         android:id="@+id/pbFat"
@@ -271,7 +272,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -286,9 +287,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="당류"
+                        android:text="@string/Sugar"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <ProgressBar
                         android:id="@+id/pbSugar"
@@ -306,7 +307,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -321,9 +322,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="탄수화물"
+                        android:text="@string/Carbo"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -336,7 +337,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -351,9 +352,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="식이섬유"
+                        android:text="@string/Fiber"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -366,7 +367,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -380,9 +381,9 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="콜레스테롤"
+                        android:text="@string/Cholesterol"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -395,7 +396,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="13sp"
-                        android:textColor="#212121"/>
+                        android:textColor="@color/GoodBlack"/>
 
                 </LinearLayout>
 
@@ -416,20 +417,22 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="+ 식단에 담기"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:layout_marginEnd="8dp"/>
+            android:text="@string/addToMeal"
+            android:backgroundTint="@color/MainGreen"
+            android:textColor="@color/white"
+            android:layout_marginEnd="8dp"
+            style="?android:attr/buttonBarButtonStyle"/>
 
         <Button
             android:id="@+id/btnRecommend"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="대체 식품 추천"
-            android:backgroundTint="#FFFFFF"
-            android:textColor="#212121"
-            android:strokeColor="#E0E0E0"/>
+            android:text="@string/alterRecommend"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/GoodBlack"
+            android:strokeColor="@color/LightGray"
+            style="?android:attr/buttonBarButtonStyle"/>
 
     </LinearLayout>
 
