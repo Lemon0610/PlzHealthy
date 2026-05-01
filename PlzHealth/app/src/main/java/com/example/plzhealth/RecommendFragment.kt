@@ -8,10 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.plzhealth.data.AppDatabase
 import com.example.plzhealth.data.FoodItem
-import com.example.plzhealth.utils.CsvFoodReader
 import com.example.plzhealth.utils.HealthScore
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import com.example.plzhealth.data.RetrofitClient
+import com.example.plzhealth.data.toFoodItem
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
@@ -53,132 +54,148 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
             val allergyList = myInfo?.allergies?.split(", ")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList()
             val diseaseList = myInfo?.diseases?.split(", ")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList()
 
-            val foods = CsvFoodReader.loadFoods(requireContext())
-
-            if (foods.isEmpty()) {
-                layoutGuideBox.visibility = View.GONE
-                showErrorOnFirstCard(cards[0], "데이터 로드 실패", "CSV 파일을 읽어올 수 없습니다.")
-                hideEmptyCards(cards, 1)
-                return@launch
-            }
-
-            val normalizedBaseCategory = normalizeText(baseCategory)
-            val cleanedBaseName = cleanDisplayName(baseName)
-
-            val scoredFoods = foods
-                .filter { food -> cleanDisplayName(food.name) != cleanedBaseName }
-                .filter { food -> !containsAllergy(food, allergyList) }
-                .map { food ->
-                    food to HealthScore.calculateScore(
-                        sodium = food.sodium,
-                        sugar = food.sugar,
-                        saturatedFat = food.saturatedFat,
-                        protein = food.protein,
-                        fiber = food.fiber,
-                        kcal = food.kcal
-                    )
-                }
-
-            val sameCategoryFoods = scoredFoods
-                .filter { (food, _) ->
-                    normalizeText(food.category) == normalizedBaseCategory
-                }
-                .sortedWith(
-                    compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
-                        .thenByDescending { it.second }.
-                        thenBy { abs(it.second - baseScore) })
-
-            val higherSameCategory = sameCategoryFoods
-                .filter { (_, score) -> score >= baseScore }
-            val closeSameCategory = sameCategoryFoods
-                .filter { (_, score) -> score >= baseScore - 10 }
-            val similarNameFoods = scoredFoods
-                .filter { (food, score) ->
-                    hasKeywordMatch(baseName, food.name) && score >= baseScore - 10
-                }
-                .sortedWith(
-                    compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
-                        .thenByDescending { it.second }
-                        .thenBy { abs(it.second - baseScore) }
-                )
-            val closeScoreFoods = scoredFoods
-                .filter { (_, score) -> score >= baseScore - 10 }
-                .sortedWith(
-                    compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
-                        .thenByDescending { it.second }
-                        .thenBy { abs(it.second - baseScore) }
+            try {
+                val response = RetrofitClient.service.getNutriInfo(
+                    serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                    foodName = baseCategory,
+                    numOfRows = 100
                 )
 
-            val rawRecommended: List<Pair<FoodItem, Int>>
-            val headerMessage: String
+                val apiItems = response.response.body.items ?: emptyList()
+                val foods = apiItems.map { it.toFoodItem() } // FoodItem으로 변환
 
-            when {
-                higherSameCategory.isNotEmpty() -> {
-                    rawRecommended = higherSameCategory
-                    headerMessage = "현재 식품보다 건강점수가 같거나 높은 같은 카테고리 식품을 추천합니다."
+                if (foods.isEmpty()) {
+                    layoutGuideBox.visibility = View.GONE
+                    showErrorOnFirstCard(cards[0], "데이터 없음", "추천할 식품이 없습니다.")
+                    hideEmptyCards(cards, 1)
+                    return@launch
                 }
-                closeSameCategory.isNotEmpty() -> {
-                    rawRecommended = closeSameCategory
-                    headerMessage = "같은 카테고리 내에서 현재 식품과 점수대가 비슷한 참고 후보를 추천합니다."
-                }
-                similarNameFoods.isNotEmpty() -> {
-                    rawRecommended = similarNameFoods
-                    headerMessage = "같은 카테고리 비교 데이터가 부족하여, 이름이 유사하고 점수대가 비슷한 참고 후보를 추천합니다."
-                }
-                closeScoreFoods.isNotEmpty() -> {
-                    rawRecommended = closeScoreFoods
-                    headerMessage = "같은 카테고리 비교 데이터가 부족하여, 현재 식품과 점수대가 비슷한 영양성분 기준 참고 후보를 추천합니다."
-                }
-                else -> {
-                    rawRecommended = emptyList()
-                    headerMessage = "추천 가능한 식품 데이터가 부족합니다."
-                }
-            }
 
-            val recommended = selectFinalRecommendations(
-                rawRecommended,
-                baseScore,
-                3
-            )
+                val normalizedBaseCategory = normalizeText(baseCategory)
+                val cleanedBaseName = cleanDisplayName(baseName)
 
-            if (recommended.isEmpty()) {
-                layoutGuideBox.visibility = View.VISIBLE
-                tvGuideMessage.text = "현재 식품과 비교 가능한 추천 후보가 부족합니다."
-                showErrorOnFirstCard(cards[0], "추천 식품 없음", "비교 가능한 식품 데이터가 부족합니다.")
-                hideEmptyCards(cards, 1)
-                return@launch
-            }
-
-            val personalizedMessage = buildPersonalizedMessage(allergyList, diseaseList)
-            layoutGuideBox.visibility = View.VISIBLE
-            tvGuideMessage.text = if (personalizedMessage.isNotBlank()) "$headerMessage\n$personalizedMessage" else headerMessage
-
-            // 2. 표시 부분 수정: 반복문을 통해 각 카드에 데이터 바인딩
-            for (i in cards.indices) {
-                val cardView = cards[i]
-                val item = recommended.getOrNull(i)
-
-                if (item != null) {
-                    cardView.visibility = View.VISIBLE
-                    // 분리된 레이아웃 내부의 뷰들을 부모(cardView)에서 찾음
-                    bindToCard(
-                        cardView = cardView,
-                        item = item,
-                        baseScore = baseScore,
-                        baseSodium = baseSodium,
-                        baseSugar = baseSugar,
-                        baseFat = baseSaturatedFat,
-                        baseProtein = baseProtein,
-                        baseFiber = baseFiber,
-                        baseKcal = baseKcal
-                    )
-
-                    cardView.setOnClickListener {
-                        moveToFoodDetail(item.first)
+                val scoredFoods = foods
+                    .filter { food -> cleanDisplayName(food.name) != cleanedBaseName }
+                    .filter { food -> !containsAllergy(food, allergyList) }
+                    .map { food ->
+                        food to HealthScore.calculateScore(
+                            sodium = food.sodium,
+                            sugar = food.sugar,
+                            saturatedFat = food.saturatedFat,
+                            protein = food.protein,
+                            fiber = food.fiber,
+                            kcal = food.kcal
+                        )
                     }
-                } else {
-                    cardView.visibility = View.GONE
+
+                val sameCategoryFoods = scoredFoods
+                    .filter { (food, _) ->
+                        normalizeText(food.category) == normalizedBaseCategory
+                    }
+                    .sortedWith(
+                        compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
+                            .thenByDescending { it.second }.thenBy { abs(it.second - baseScore) })
+
+                val higherSameCategory = sameCategoryFoods
+                    .filter { (_, score) -> score >= baseScore }
+                val closeSameCategory = sameCategoryFoods
+                    .filter { (_, score) -> score >= baseScore - 10 }
+                val similarNameFoods = scoredFoods
+                    .filter { (food, score) ->
+                        hasKeywordMatch(baseName, food.name) && score >= baseScore - 10
+                    }
+                    .sortedWith(
+                        compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
+                            .thenByDescending { it.second }
+                            .thenBy { abs(it.second - baseScore) }
+                    )
+                val closeScoreFoods = scoredFoods
+                    .filter { (_, score) -> score >= baseScore - 10 }
+                    .sortedWith(
+                        compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
+                            .thenByDescending { it.second }
+                            .thenBy { abs(it.second - baseScore) }
+                    )
+
+                val rawRecommended: List<Pair<FoodItem, Int>>
+                val headerMessage: String
+
+                when {
+                    higherSameCategory.isNotEmpty() -> {
+                        rawRecommended = higherSameCategory
+                        headerMessage = "현재 식품보다 건강점수가 같거나 높은 같은 카테고리 식품을 추천합니다."
+                    }
+
+                    closeSameCategory.isNotEmpty() -> {
+                        rawRecommended = closeSameCategory
+                        headerMessage = "같은 카테고리 내에서 현재 식품과 점수대가 비슷한 참고 후보를 추천합니다."
+                    }
+
+                    similarNameFoods.isNotEmpty() -> {
+                        rawRecommended = similarNameFoods
+                        headerMessage = "같은 카테고리 비교 데이터가 부족하여, 이름이 유사하고 점수대가 비슷한 참고 후보를 추천합니다."
+                    }
+
+                    closeScoreFoods.isNotEmpty() -> {
+                        rawRecommended = closeScoreFoods
+                        headerMessage =
+                            "같은 카테고리 비교 데이터가 부족하여, 현재 식품과 점수대가 비슷한 영양성분 기준 참고 후보를 추천합니다."
+                    }
+
+                    else -> {
+                        rawRecommended = emptyList()
+                        headerMessage = "추천 가능한 식품 데이터가 부족합니다."
+                    }
                 }
+
+                val recommended = selectFinalRecommendations(
+                    rawRecommended,
+                    baseScore,
+                    3
+                )
+
+                if (recommended.isEmpty()) {
+                    layoutGuideBox.visibility = View.VISIBLE
+                    tvGuideMessage.text = "현재 식품과 비교 가능한 추천 후보가 부족합니다."
+                    showErrorOnFirstCard(cards[0], "추천 식품 없음", "비교 가능한 식품 데이터가 부족합니다.")
+                    hideEmptyCards(cards, 1)
+                    return@launch
+                }
+
+                val personalizedMessage = buildPersonalizedMessage(allergyList, diseaseList)
+                layoutGuideBox.visibility = View.VISIBLE
+                tvGuideMessage.text =
+                    if (personalizedMessage.isNotBlank()) "$headerMessage\n$personalizedMessage" else headerMessage
+
+                // 2. 표시 부분 수정: 반복문을 통해 각 카드에 데이터 바인딩
+                for (i in cards.indices) {
+                    val cardView = cards[i]
+                    val item = recommended.getOrNull(i)
+
+                    if (item != null) {
+                        cardView.visibility = View.VISIBLE
+                        // 분리된 레이아웃 내부의 뷰들을 부모(cardView)에서 찾음
+                        bindToCard(
+                            cardView = cardView,
+                            item = item,
+                            baseScore = baseScore,
+                            baseSodium = baseSodium,
+                            baseSugar = baseSugar,
+                            baseFat = baseSaturatedFat,
+                            baseProtein = baseProtein,
+                            baseFiber = baseFiber,
+                            baseKcal = baseKcal
+                        )
+
+                        cardView.setOnClickListener {
+                            moveToFoodDetail(item.first)
+                        }
+                    } else {
+                        cardView.visibility = View.GONE
+                    }
+                }
+            } catch (e: Exception) {
+                showErrorOnFirstCard(cards[0], "오류 발생", "데이터를 가져오지 못했습니다.")
             }
         }
     }
