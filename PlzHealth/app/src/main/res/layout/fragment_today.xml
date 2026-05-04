@@ -35,7 +35,7 @@
             android:elevation="2dp"
             android:orientation="horizontal"
             android:padding="20dp"
-            android:baselineAligned="false" >
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -43,6 +43,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tvTotalKcal"
                     android:layout_width="wrap_content"
@@ -50,6 +51,7 @@
                     android:text="@string/number"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,6 +65,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tvFoodCount"
                     android:layout_width="wrap_content"
@@ -70,6 +73,7 @@
                     android:text="@string/number"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,6 +87,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tvAverageScore"
                     android:layout_width="wrap_content"
@@ -91,6 +96,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@color/MainGreen" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -99,6 +105,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- 아침 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,6 +148,7 @@
                 android:layout_marginTop="10dp" />
         </LinearLayout>
 
+        <!-- 점심 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -183,13 +191,15 @@
                 android:layout_marginTop="10dp" />
         </LinearLayout>
 
+        <!-- 저녁 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_summary_box"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
