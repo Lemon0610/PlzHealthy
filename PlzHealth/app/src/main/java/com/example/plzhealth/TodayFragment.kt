@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plzhealth.data.FoodItem
 import com.example.plzhealth.utils.HealthScore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -46,9 +47,17 @@ class TodayFragment : Fragment() {
             val lunchList = allSelectedMeals.filter { it.mealType == "점심" }.map { it.food }
             val dinnerList = allSelectedMeals.filter { it.mealType == "저녁" }.map { it.food }
 
-            rvBreakfast.adapter = FoodAdapter(breakfastList) { }
-            rvLunch.adapter = FoodAdapter(lunchList) { }
-            rvDinner.adapter = FoodAdapter(dinnerList) { }
+            rvBreakfast.adapter = FoodAdapter(breakfastList) { food ->
+                moveToFoodDetail(food)
+            }
+
+            rvLunch.adapter = FoodAdapter(lunchList) { food ->
+                moveToFoodDetail(food)
+            }
+
+            rvDinner.adapter = FoodAdapter(dinnerList) { food ->
+                moveToFoodDetail(food)
+            }
 
             updateSummaryUI(view, allSelectedMeals)
         }
@@ -95,6 +104,31 @@ class TodayFragment : Fragment() {
         val fragment = SearchFragment().apply {
             arguments = Bundle().apply {
                 putInt("defaultType", defaultType)
+            }
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun moveToFoodDetail(food: FoodItem) {
+        val fragment = FoodDetailFragment().apply {
+            arguments = Bundle().apply {
+                putString("foodName", food.name)
+                putString("foodCode", food.code)
+                putDouble("kcal", food.kcal)
+                putDouble("protein", food.protein)
+                putDouble("fat", food.fat)
+                putDouble("carb", food.carb)
+                putDouble("sugar", food.sugar)
+                putDouble("fiber", food.fiber)
+                putDouble("sodium", food.sodium)
+                putDouble("saturatedFat", food.saturatedFat)
+                putString("foodCategory", food.category)
+                putString("foodSubCategory", food.subCategory)
+                putInt("defaultType", 0)
             }
         }
 

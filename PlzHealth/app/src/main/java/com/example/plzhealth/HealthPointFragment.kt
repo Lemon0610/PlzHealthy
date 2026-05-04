@@ -157,10 +157,10 @@ class HealthPointFragment : Fragment() {
             totalKcal >= 2000 ->
                 "오늘 총 칼로리가 높은 편입니다. 남은 식사는 가볍게 조절해보세요."
 
-            totalProtein < 20 ->
+            totalProtein >0 && totalProtein< 20 ->
                 "오늘은 단백질 섭취가 부족할 수 있습니다. 단백질이 포함된 식품을 함께 선택해보세요."
 
-            totalFiber < 5 ->
+            totalFiber >0 && totalFiber< 5 ->
                 "오늘은 식이섬유가 부족할 수 있습니다. 채소, 곡류, 식이섬유가 있는 식품을 함께 고려해보세요."
 
             averageScore >= 80 ->
