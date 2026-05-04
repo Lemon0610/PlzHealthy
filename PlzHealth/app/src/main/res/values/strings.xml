@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">PlzHealth</string>
+    <string name="btnHealth">건강점수</string>
+    <string name="btnToday">오늘의 식단</string>
+    <string name="btnSearch">검색</string>
+    <string name="btnMypage">마이페이지</string>
+
+    <string name="TodayDate">2026년 04월 13일</string>
+    <string name="number">0</string>
+    <string name="tvTotalKcal">총 칼로리</string>
+    <string name="tvFoodCount">담은 식품</string>
+    <string name="tvAverageScore">건강 점수</string>
+    <string name="morning">아침</string>
+    <string name="lunch">점심</string>
+    <string name="dinner">저녁</string>
+    <string name="AddMeal">+ 식품 추가</string>
+
+    <string name="searchHint">식품을 검색하세요</string>
+    <string name="allFood">전체 식품</string>
+    <string name="searchDescription">검색 버튼</string>
+    <string name="searchResult">검색 결과</string>">
+    <string name="searchResultN">검색 결과가 없습니다</string>
+    <string name="addToMeal">식단에 담기</string>
+    <string name="Back">뒤로가기</string>
+    <string name="foodDetail">식품 상세정보</string>
+    <string name="percentage">/ 100</string>
+    <string name="Kcal">칼로리(Kcal)</string>
+    <string name="danger">단백질(g)</string>
+    <string name="detailInfo">상세정보</string>
+    <string name="kijun">1회 제공량: 100g</string>
+    <string name="Na">나트륨</string>
+    <string name="Fat">지방</string>
+    <string name="Sugar">당류</string>
+    <string name="Carbo">탄수화물</string>
+    <string name="Fiber">식이섬유</string>
+    <string name="Cholesterol">닫기</string>
+    <string name="alterRecommend">대체 식품 추천</string>
+    <string name="Close">닫기</string>
+    <string name="tvPopupFoodName">식품명</string>
+    <string name="tvPopupFoodKcal">0 Kcal</string>
+    <string name="spinnerMealType">식사 유형</string>
+    <string name="btnConfirmAdd">담기</string>
+    <string name="ganji">⇄</string>
+    <string name="tvPageDesc">맞춤형 추천 가이드</string>
+    <string name="tvGuideMessage">데이터를 분석 중입니다...</string>
+    <string name="recommendAlter">추천 대체 식품</string>
+    <string name="Score">점수</string>
+    <string name="tvRecommendReason">추천 이유가 표시됩니다.</string>
+    <string name="tvScoreDiff">+0점</string>
+    <string name="backArrow">›</string>
+
+    <string name="myInfo">내 정보</string>
+    <string name="tvMyName">이름: 건강해조</string>
+    <string name="tvMyAgeGender">나이: 21세 (여성)</string>
+    <string name="tvMyAllergies">알러지: 땅콩, 복숭아, 우유</string>
+    <string name="family">구성원</string>
+    <string name="addFamily">구성원 추가</string>
+    <string name="name">이름</string>
+    <string name="etDetailName">이름 입력</string>
+    <string name="birth">생년월일</string>
+    <string name="etDetailBirth">생년월일 (예: 19950520)</string>
+    <string name="tvDisplayAge">연산된 나이: - 세</string>
+    <string name="rgGender">성별</string>
+    <string name="rbMale">남성</string>
+    <string name="rbFemale">여성</string>
+    <string name="Allergies">알러지 선택</string>
+    <string name="Diseases">질병 선택</string>
+    <string name="DetailMemo">기타 메모</string>
+    <string name="memoHint">추가 정보를 입력하세요</string>
+    <string name="btnSave">정보 저장하기</string>
+    <string name="btnDelete">정보 삭제하기</string>
+    <string name="Allergies1">난류</string>
+    <string name="Allergies2">유제품</string>
+    <string name="Allergies3">곡류(밀)</string>
+    <string name="Allergies4">콩류</string>
+    <string name="Allergies5">견과류</string>
+    <string name="Allergies6">해산물</string>
+    <string name="Allergies7">육류</string>
+    <string name="Allergies8">과일류</string>
+    <string name="Allergies9">생선류</string>
+    <string name="Diseases1">당뇨</string>
+    <string name="Diseases2">고혈압</string>
+    <string name="Diseases3">고지혈증</string>
+    <string name="Diseases4">비만</string>
+
+    <string-array name="meal_types">
+        <item>아침</item>
+        <item>점심</item>
+        <item>저녁</item>
+    </string-array>
+</resources>

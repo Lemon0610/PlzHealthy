@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addFamily"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/GoodBlack"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- 이름 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etDetailName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/etDetailName"
+                android:textColorHint="@color/LightGray"
+                android:inputType="text"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:background="@drawable/bg_search_box"
+                android:textSize="15sp"
+                android:textColor="@color/GoodBlack"
+                android:autofillHints="none"/>
+        </LinearLayout>
+
+        <!-- 생년월일 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/birth"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etDetailBirth"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/etDetailBirth"
+                android:inputType="number"
+                android:maxLength="8"
+                android:textColorHint="@color/LightGray"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:background="@drawable/bg_search_box"
+                android:textSize="15sp"
+                android:textColor="@color/GoodBlack"
+                android:autofillHints="none"/>
+
+            <TextView
+                android:id="@+id/tvDisplayAge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tvDisplayAge"
+                android:textSize="12sp"
+                android:textColor="@color/MainGreen"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <!-- 성별 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rgGender"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="4dp"/>
+
+            <RadioGroup
+                android:id="@+id/rgGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/rbMale"
+                    android:text="@string/rbMale"
+                    android:checked="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/MainGreen"
+                    android:textColor="@color/GoodBlack"/>
+                <RadioButton
+                    android:id="@+id/rbFemale"
+                    android:text="@string/rbFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:buttonTint="@color/MainGreen"
+                    android:textColor="@color/GoodBlack"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- 알러지 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Allergies"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="8dp"/>
+
+            <GridLayout
+                android:id="@+id/gridAllergies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3">
+                <CheckBox android:text="@string/Allergies1" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies2" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies3" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies4" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies5" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies6" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies7" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies8" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:text="@string/Allergies9" android:buttonTint="@color/MainGreen"/>
+            </GridLayout>
+        </LinearLayout>
+
+        <!-- 질병 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Diseases"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="8dp"/>
+
+            <GridLayout
+                android:id="@+id/gridDiseases"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3">
+                <CheckBox android:id="@+id/cbDiabetes" android:text="@string/Diseases1" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:id="@+id/cbHypertension" android:text="@string/Diseases2" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:id="@+id/cbHyperlipidemia" android:text="@string/Diseases3" android:buttonTint="@color/MainGreen"/>
+                <CheckBox android:id="@+id/cbFat" android:text="@string/Diseases4" android:buttonTint="@color/MainGreen"/>
+            </GridLayout>
+        </LinearLayout>
+
+        <!-- 메모 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_summary_box"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/DetailMemo"
+                android:textSize="12sp"
+                android:textColor="@color/LightGray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etDetailMemo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/memoHint"
+                android:textColorHint="@color/LightGray"
+                android:gravity="top"
+                android:minLines="3"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/bg_search_box"
+                android:inputType="text"
+                android:textColor="@color/GoodBlack"
+                android:autofillHints="none"/>
+        </LinearLayout>
+
+        <!-- 저장 버튼 -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/btnSave"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:backgroundTint="@color/MainGreen"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 삭제 버튼 -->
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/btnDelete"
+            android:textColor="@color/Red"
+            android:backgroundTint="@color/white"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
