@@ -1,5 +1,9 @@
 package com.example.plzhealth.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class FoodItem(
     val code: String,
     val name: String,
@@ -13,4 +17,4 @@ data class FoodItem(
     val fiber: Double,
     val sodium: Double,
     val saturatedFat: Double
-)
+) : Parcelable

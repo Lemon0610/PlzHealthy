@@ -35,14 +35,21 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        val baseCategory = arguments?.getString("category") ?: ""
-        val baseName = arguments?.getString("baseName") ?: ""
-        val baseSodium = arguments?.getDouble("sodium") ?: 0.0
-        val baseSugar = arguments?.getDouble("sugar") ?: 0.0
-        val baseSaturatedFat = arguments?.getDouble("saturatedFat") ?: 0.0
-        val baseProtein = arguments?.getDouble("protein") ?: 0.0
-        val baseFiber = arguments?.getDouble("fiber") ?: 0.0
-        val baseKcal = arguments?.getDouble("kcal") ?: 0.0
+        val food = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("selectedFood", FoodItem::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable("selectedFood")
+        }
+
+        val baseCategory = food?.category ?: arguments?.getString("category") ?: ""
+        val baseName = food?.name ?: arguments?.getString("baseName") ?: ""
+        val baseSodium = food?.sodium ?: arguments?.getDouble("sodium") ?: 0.0
+        val baseSugar = food?.sugar ?: arguments?.getDouble("sugar") ?: 0.0
+        val baseSaturatedFat = food?.saturatedFat ?: arguments?.getDouble("saturatedFat") ?: 0.0
+        val baseProtein = food?.protein ?: arguments?.getDouble("protein") ?: 0.0
+        val baseFiber = food?.fiber ?: arguments?.getDouble("fiber") ?: 0.0
+        val baseKcal = food?.kcal ?: arguments?.getDouble("kcal") ?: 0.0
 
         val baseScore = HealthScore.calculateScore(
             sodium = baseSodium, sugar = baseSugar, saturatedFat = baseSaturatedFat,
@@ -55,14 +62,22 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
             val diseaseList = myInfo?.diseases?.split(", ")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList()
 
             try {
+                val searchKeyword = if (baseCategory.isNotBlank()) baseCategory else baseName.take(2)
+
                 val response = RetrofitClient.service.getNutriInfo(
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                    foodName = baseCategory,
+                    foodName = searchKeyword,
                     numOfRows = 100
                 )
 
                 val apiItems = response.response.body.items ?: emptyList()
-                val foods = apiItems.map { it.toFoodItem() } // FoodItem으로 변환
+                val foods = apiItems.map { it.toFoodItem() }
+
+                if (food != null) {
+                    android.util.Log.d("RecommendDebug", "전달받은 음식: ${food.name}, 카테고리: ${food.category}")
+                } else {
+                    android.util.Log.e("RecommendDebug", "Food 객체가 null입니다!")
+                }
 
                 if (foods.isEmpty()) {
                     layoutGuideBox.visibility = View.GONE
@@ -167,14 +182,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                 tvGuideMessage.text =
                     if (personalizedMessage.isNotBlank()) "$headerMessage\n$personalizedMessage" else headerMessage
 
-                // 2. 표시 부분 수정: 반복문을 통해 각 카드에 데이터 바인딩
                 for (i in cards.indices) {
                     val cardView = cards[i]
                     val item = recommended.getOrNull(i)
 
                     if (item != null) {
                         cardView.visibility = View.VISIBLE
-                        // 분리된 레이아웃 내부의 뷰들을 부모(cardView)에서 찾음
                         bindToCard(
                             cardView = cardView,
                             item = item,
@@ -200,7 +213,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         }
     }
 
-    // 카드 내부의 뷰에 데이터를 직접 꽂아주는 함수
     private fun bindToCard(
         cardView: View,
         item: Pair<FoodItem, Int>,
@@ -211,7 +223,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         val food = item.first
         val score = item.second
 
-        // 분리된 XML(item_recommend_card.xml)의 ID들을 참조
         val tvScore = cardView.findViewById<TextView>(R.id.tvFoodScore)
         val tvName = cardView.findViewById<TextView>(R.id.tvFoodName)
         val tvReason = cardView.findViewById<TextView>(R.id.tvRecommendReason)
@@ -220,14 +231,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         tvScore.text = score.toString()
         tvName.text = cleanDisplayName(food.name)
 
-        // 추천 사유 생성 및 적용
         tvReason.text = getReason(
             rec = food, recScore = score, baseScore = baseScore,
             bSodium = baseSodium, bSugar = baseSugar, bFat = baseFat,
             bProtein = baseProtein, bFiber = baseFiber, bKcal = baseKcal
         )
 
-        // 점수 차이 계산 (+5점 등)
         val diff = score - baseScore
         tvDiff.text = if (diff >= 0) "+${diff}점" else "${diff}점"
     }
@@ -239,8 +248,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         cardView.findViewById<TextView>(R.id.tvFoodScore).text = "-"
         cardView.findViewById<TextView>(R.id.tvScoreDiff).text = "0점"
     }
-
-    // --- 이하 보조 함수들은 기존 로직 그대로 유지 ---
 
     private fun getReason(
         rec: FoodItem, recScore: Int, baseScore: Int,
@@ -303,12 +310,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
     private fun moveToFoodDetail(food: FoodItem) {
         val fragment = FoodDetailFragment().apply {
             arguments = Bundle().apply {
-                putString("foodName", food.name); putString("foodCode", food.code)
-                putDouble("kcal", food.kcal); putDouble("protein", food.protein)
-                putDouble("fat", food.fat); putDouble("carb", food.carb)
-                putDouble("sugar", food.sugar); putDouble("fiber", food.fiber)
-                putDouble("sodium", food.sodium); putDouble("saturatedFat", food.saturatedFat)
-                putString("foodCategory", food.category); putString("foodSubCategory", food.subCategory)
+                putParcelable("selectedFood", food)
                 putInt("defaultType", 0)
             }
         }
