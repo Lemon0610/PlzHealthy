@@ -56,9 +56,8 @@ class FoodListFragment : Fragment() {
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
                     foodName = query
                 )
-
                 val apiItems = response.response.body.items ?: emptyList()
-                val foodItems = apiItems.map { it.toFoodItem() } // FoodItem으로 변환
+                val foodItems = apiItems.map { it.toFoodItem() }
 
                 if (foodItems.isEmpty()) {
                     tvNoResult.visibility = View.VISIBLE
@@ -71,17 +70,7 @@ class FoodListFragment : Fragment() {
                     rvFoodList.adapter = FoodAdapter(foodItems) { food ->
                         val fragment = FoodDetailFragment().apply {
                             arguments = Bundle().apply {
-                                putString("foodName", food.name)
-                                putDouble("kcal", food.kcal)
-                                putDouble("protein", food.protein)
-                                putDouble("fat", food.fat)
-                                putDouble("carb", food.carb)
-                                putDouble("sugar", food.sugar)
-                                putDouble("fiber", food.fiber)
-                                putDouble("sodium", food.sodium)
-                                putDouble("saturatedFat", food.saturatedFat)
-                                putString("foodCategory", food.category)
-                                putString("foodSubCategory", food.subCategory)
+                                putParcelable("selectedFood", food)
                                 putInt("defaultType", arguments?.getInt("defaultType") ?: 0)
                             }
                         }
@@ -92,7 +81,8 @@ class FoodListFragment : Fragment() {
                     }
                 }
             } catch (e: Exception) {
-                tvNoResult.text = "데이터를 불러오지 못했습니다."
+                e.printStackTrace()
+                tvNoResult.text = "에러: ${e.message}"
                 tvNoResult.visibility = View.VISIBLE
             }
         }

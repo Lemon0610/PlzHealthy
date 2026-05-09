@@ -29,11 +29,10 @@
     <string name="detailInfo">상세정보</string>
     <string name="kijun">1회 제공량: 100g</string>
     <string name="Na">나트륨</string>
-    <string name="Fat">지방</string>
+    <string name="Fat">포화지방산</string>
     <string name="Sugar">당류</string>
     <string name="Carbo">탄수화물</string>
     <string name="Fiber">식이섬유</string>
-    <string name="Cholesterol">닫기</string>
     <string name="alterRecommend">대체 식품 추천</string>
     <string name="Close">닫기</string>
     <string name="tvPopupFoodName">식품명</string>
