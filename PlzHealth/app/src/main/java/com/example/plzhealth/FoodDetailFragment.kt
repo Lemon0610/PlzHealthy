@@ -1,35 +1,39 @@
 package com.example.plzhealth
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.plzhealth.data.FoodItem
 import com.example.plzhealth.utils.HealthScore
+import java.util.Locale
 
 class FoodDetailFragment : Fragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         return inflater.inflate(R.layout.fragment_fooddetail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val food = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelable("selectedFood", FoodItem::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getParcelable("selectedFood")
-        }
+        val food = getFoodItemFromArguments()
         val defaultMealType = arguments?.getInt("defaultType") ?: 0
 
         if (food == null) {
-            Toast.makeText(context, "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
             return
         }
 
@@ -45,17 +49,36 @@ class FoodDetailFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvHealthScore).text = calculatedScore.toString()
         view.findViewById<TextView>(R.id.tvHealthScoreCircle).text = calculatedScore.toString()
         view.findViewById<TextView>(R.id.tvFoodName).text = food.name
-        view.findViewById<TextView>(R.id.tvEnergy).text = food.kcal.toString()
-        view.findViewById<TextView>(R.id.tvProtein).text = food.protein.toString()
-        view.findViewById<TextView>(R.id.tvFat).text = "${food.fat} g" //포화지방산
-        view.findViewById<TextView>(R.id.tvCarbo).text = "${food.carb} g" //탄수화물
-        view.findViewById<TextView>(R.id.tvSugar).text = "${food.sugar} g" //당류
-        view.findViewById<TextView>(R.id.tvFiber).text = "${food.fiber} g" //식이섬유
-        view.findViewById<TextView>(R.id.tvSodium).text = "${food.sodium} mg" //나트륨
 
-        view.findViewById<ProgressBar>(R.id.pbSodium).progress = (food.sodium / 10).toInt().coerceIn(0, 100)
-        view.findViewById<ProgressBar>(R.id.pbFat).progress = (food.fat * 2).toInt().coerceIn(0, 100)
-        view.findViewById<ProgressBar>(R.id.pbSugar).progress = (food.sugar * 5).toInt().coerceIn(0, 100)
+        view.findViewById<TextView>(R.id.tvEnergy).text =
+            String.format(Locale.getDefault(), "%.1f Kcal", food.kcal)
+
+        view.findViewById<TextView>(R.id.tvProtein).text =
+            String.format(Locale.getDefault(), "%.1f g", food.protein)
+
+        view.findViewById<TextView>(R.id.tvFat).text =
+            String.format(Locale.getDefault(), "%.1f g", food.fat)
+
+        view.findViewById<TextView>(R.id.tvCarbo).text =
+            String.format(Locale.getDefault(), "%.1f g", food.carb)
+
+        view.findViewById<TextView>(R.id.tvSugar).text =
+            String.format(Locale.getDefault(), "%.1f g", food.sugar)
+
+        view.findViewById<TextView>(R.id.tvFiber).text =
+            String.format(Locale.getDefault(), "%.1f g", food.fiber)
+
+        view.findViewById<TextView>(R.id.tvSodium).text =
+            String.format(Locale.getDefault(), "%.1f mg", food.sodium)
+
+        view.findViewById<ProgressBar>(R.id.pbSodium).progress =
+            (food.sodium / 10).toInt().coerceIn(0, 100)
+
+        view.findViewById<ProgressBar>(R.id.pbFat).progress =
+            (food.fat * 2).toInt().coerceIn(0, 100)
+
+        view.findViewById<ProgressBar>(R.id.pbSugar).progress =
+            (food.sugar * 5).toInt().coerceIn(0, 100)
 
         view.findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -67,6 +90,7 @@ class FoodDetailFragment : Fragment() {
                     putParcelable("selectedFood", food)
                 }
             }
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
@@ -80,7 +104,19 @@ class FoodDetailFragment : Fragment() {
                     putInt("defaultType", defaultMealType)
                 }
             }
+
             dialog.show(parentFragmentManager, "AddMealDialog")
+        }
+    }
+
+    private fun getFoodItemFromArguments(): FoodItem? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("selectedFood", FoodItem::class.java)
+                ?: arguments?.getParcelable("food", FoodItem::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable("selectedFood")
+                ?: arguments?.getParcelable("food")
         }
     }
 }

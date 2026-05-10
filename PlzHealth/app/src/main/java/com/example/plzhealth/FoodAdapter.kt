@@ -7,10 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.plzhealth.data.FoodItem
 import com.example.plzhealth.utils.HealthScore
+import java.util.Locale
 
 class FoodAdapter(
     private val foodList: List<FoodItem>,
-    private val onItemClick: (FoodItem) -> Unit
+    private val onItemClick: (FoodItem) -> Unit,
+    private val onItemLongClick: ((FoodItem) -> Unit)? = null
 ) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
 
     class FoodViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -22,6 +24,7 @@ class FoodAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_food, parent, false)
+
         return FoodViewHolder(view)
     }
 
@@ -29,18 +32,27 @@ class FoodAdapter(
         val food = foodList[position]
 
         val score = HealthScore.calculateScore(
-            food.sodium, food.sugar, food.saturatedFat,
-            food.protein, food.fiber, food.kcal
+            food.sodium,
+            food.sugar,
+            food.saturatedFat,
+            food.protein,
+            food.fiber,
+            food.kcal
         )
 
         holder.tvHealthScore.text = score.toString()
         holder.tvFoodName.text = food.name
-        holder.tvFoodEnergy.text = "${food.kcal}Kcal"
+        holder.tvFoodEnergy.text = String.format(Locale.getDefault(), "%.1fKcal", food.kcal)
 
         holder.itemView.setOnClickListener {
             onItemClick(food)
         }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick?.invoke(food)
+            true
+        }
     }
 
-    override fun getItemCount() = foodList.size
+    override fun getItemCount(): Int = foodList.size
 }

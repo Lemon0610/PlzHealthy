@@ -146,7 +146,13 @@ class SearchFragment : Fragment() {
                 )
                 val apiItems = response.response.body.items ?: emptyList()
                 foodList = apiItems.map { it.toFoodItem() }
-                recyclerView.adapter = FoodAdapter(foodList) { food -> goToDetail(food) }
+                recyclerView.adapter = FoodAdapter(
+                    foodList = foodList,
+                    onItemClick = { food ->
+                        goToDetail(food)
+                    },
+                    onItemLongClick = { }
+                )
             } catch (e: Exception) {
                 Log.e("SearchFragment", "에러: ${e.message}")
             } finally {

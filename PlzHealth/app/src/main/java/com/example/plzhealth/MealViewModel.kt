@@ -6,13 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.plzhealth.data.AppDatabase
-import com.example.plzhealth.data.entity.MealEntity
 import com.example.plzhealth.data.FoodItem
+import com.example.plzhealth.data.entity.MealEntity
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class SelectedMeal(
+    val id: Int,
     val food: FoodItem,
     val mealType: String
 )
@@ -22,7 +23,8 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
     private val mealDao = database.mealDao()
 
-    private val todayDate: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+    private val todayDate: String =
+        LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
     private val _selectedMeals = MutableLiveData<MutableList<SelectedMeal>>(mutableListOf())
     val selectedMeals: LiveData<MutableList<SelectedMeal>> = _selectedMeals
@@ -34,8 +36,10 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
     fun loadTodayMeals() {
         viewModelScope.launch {
             val entities = mealDao.getMealsByDate(todayDate)
+
             val list = entities.map { entity ->
                 SelectedMeal(
+                    id = entity.id,
                     food = FoodItem(
                         code = entity.code,
                         name = entity.foodName,
@@ -53,6 +57,7 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
                     mealType = entity.mealType
                 )
             }.toMutableList()
+
             _selectedMeals.postValue(list)
         }
     }
@@ -75,7 +80,15 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
                 subCategory = food.subCategory,
                 code = food.code
             )
+
             mealDao.insert(entity)
+            loadTodayMeals()
+        }
+    }
+
+    fun deleteMeal(mealId: Int) {
+        viewModelScope.launch {
+            mealDao.deleteMealById(mealId)
             loadTodayMeals()
         }
     }

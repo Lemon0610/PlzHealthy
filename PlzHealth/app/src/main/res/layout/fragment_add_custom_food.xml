@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="직접 식품 추가"
+            android:textColor="@color/GoodBlack"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etFoodName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:hint="식품 이름"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etKcal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="칼로리 (kcal)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etProtein"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="단백질 (g)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etSugar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="당류 (g)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etFiber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="식이섬유 (g)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etSodium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="나트륨 (mg)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etSaturatedFat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="포화지방 (g)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/spinnerMealType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnAddFood"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/MainGreen"
+            android:text="식단에 추가"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</ScrollView>
