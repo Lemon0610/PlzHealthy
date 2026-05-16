@@ -4,15 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.plzhealth.data.dao.UserDao
-import com.example.plzhealth.data.entity.UserEntity
+import com.example.plzhealth.data.dao.FoodCategoryDao
 import com.example.plzhealth.data.dao.MealDao
+import com.example.plzhealth.data.dao.UserDao
+import com.example.plzhealth.data.entity.FoodCategoryEntity
 import com.example.plzhealth.data.entity.MealEntity
+import com.example.plzhealth.data.entity.UserEntity
 
-@Database(entities = [UserEntity::class, MealEntity::class], version = 2, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, MealEntity::class, FoodCategoryEntity::class],
+    version = 4,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun mealDao(): MealDao
+    abstract fun foodCategoryDao(): FoodCategoryDao
 
     companion object {
         @Volatile

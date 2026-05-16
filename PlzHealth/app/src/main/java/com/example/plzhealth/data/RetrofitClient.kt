@@ -5,19 +5,18 @@ import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
+import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     private const val BASE_URL = "https://api.data.go.kr/openapi/"
 
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
     private val client = OkHttpClient.Builder()
-        .protocols(listOf(Protocol.HTTP_1_1))
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("User-Agent", "Mozilla/5.0")
+                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36")
                 .build()
             chain.proceed(request)
         }

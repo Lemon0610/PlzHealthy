@@ -19,5 +19,6 @@ data class MealEntity(
     val saturatedFat: Double,
     val category: String,
     val subCategory: String,
+    val minorCategory: String,
     val code: String
 )

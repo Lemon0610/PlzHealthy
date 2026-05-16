@@ -7,7 +7,7 @@ data class NutriResponse(
 )
 
 data class NutriResponseBody(
-    val body: NutriBody
+    val body: NutriBody?
 )
 
 data class NutriBody(
@@ -18,7 +18,8 @@ data class NutriBody(
 data class ApiFoodItem(
     @SerializedName("foodNm") val foodNm: String?,         // 식품명
     @SerializedName("foodLv3Nm") val category: String?,    // 카테고리 (대분류)
-    @SerializedName("foodLv4Nm") val subCategory: String?, // 서브 카테고리 (중분류)
+    @SerializedName("foodLv5Nm") val subCategory: String?, // 서브 카테고리 (중분류)
+    @SerializedName("foodLv6Nm") val minorCategory: String?, // 소분류
     @SerializedName("enerc") val kcal: String?,            // 에너지
     @SerializedName("prot") val protein: String?,          // 단백질
     @SerializedName("fatce") val fat: String?,             // 지방
@@ -39,6 +40,7 @@ fun ApiFoodItem.toFoodItem(): FoodItem {
         name = this.foodNm ?: "알 수 없는 식품",
         category = this.category ?: "기타",
         subCategory = this.subCategory ?: "기타",
+        minorCategory = this.minorCategory ?: "기타",
         kcal = this.kcal.toCleanDouble(),
         protein = this.protein.toCleanDouble(),
         fat = this.fat.toCleanDouble(),

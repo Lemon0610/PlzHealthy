@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.plzhealth.data.FoodItem
 import androidx.lifecycle.lifecycleScope
 import com.example.plzhealth.data.RetrofitClient
 import com.example.plzhealth.data.toFoodItem
@@ -56,7 +55,7 @@ class FoodListFragment : Fragment() {
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
                     foodName = query
                 )
-                val apiItems = response.response.body.items ?: emptyList()
+                val apiItems = response.response.body?.items ?: emptyList()
                 val foodItems = apiItems.map { it.toFoodItem() }
 
                 if (foodItems.isEmpty()) {
@@ -67,18 +66,22 @@ class FoodListFragment : Fragment() {
                     rvFoodList.visibility = View.VISIBLE
                     rvFoodList.layoutManager = LinearLayoutManager(requireContext())
 
-                    rvFoodList.adapter = FoodAdapter(foodItems) { food ->
-                        val fragment = FoodDetailFragment().apply {
-                            arguments = Bundle().apply {
-                                putParcelable("selectedFood", food)
-                                putInt("defaultType", arguments?.getInt("defaultType") ?: 0)
+                    rvFoodList.adapter = FoodAdapter(
+                        foodList = foodItems,
+                        onItemClick = { food ->
+                            val fragment = FoodDetailFragment().apply {
+                                arguments = Bundle().apply {
+                                    putParcelable("selectedFood", food)
+                                    putInt("defaultType", arguments?.getInt("defaultType") ?: 0)
+                                }
                             }
-                        }
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainer, fragment)
-                            .addToBackStack(null)
-                            .commit()
-                    }
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainer, fragment)
+                                .addToBackStack(null)
+                                .commit()
+                            },
+                        onItemLongClick = { }
+                    )
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
