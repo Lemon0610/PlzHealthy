@@ -18,11 +18,12 @@
         android:paddingEnd="12dp">
 
         <ImageView
+            android:id="@+id/ivSearch"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/outline_search_24"
             app:tint="@color/LightGray"
-            android:contentDescription="@string/searchDescription" />
+            android:contentDescription="@string/searchDescription"/>
 
         <EditText
             android:id="@+id/etSearch"
@@ -31,7 +32,6 @@
             android:hint="@string/searchHint"
             android:background="@null"
             android:paddingStart="8dp"
-            android:paddingEnd="0dp"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:singleLine="true"
@@ -39,35 +39,49 @@
             android:autofillHints="none"/>
     </LinearLayout>
 
-    <!-- 대분류 칩 가로 스크롤 -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="4dp">
-        <LinearLayout
-            android:id="@+id/llCategoryChips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"/>
-    </HorizontalScrollView>
-
-    <!-- 전체 식품 텍스트 -->
+    <!-- 현재 단계 표시 -->
     <TextView
+        android:id="@+id/tvCategoryStep"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/allFood"
-        android:textSize="12sp"
+        android:text="대분류 선택"
+        android:textSize="13sp"
         android:textColor="@color/LightGray"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"/>
 
-    <!-- 전체 식품 목록 -->
+    <!-- 뒤로가기 버튼 -->
+    <TextView
+        android:id="@+id/tvBackCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="← 이전"
+        android:textSize="13sp"
+        android:textColor="@color/GoodBlack"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"/>
+
+    <!-- 카테고리 그리드 -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAllFoods"
+        android:id="@+id/rvCategoryGrid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- 식품 결과 리스트 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFoodResult"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -1,77 +1,69 @@
 package com.example.plzhealth
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plzhealth.data.AppDatabase
 import com.example.plzhealth.data.FoodItem
 import com.example.plzhealth.data.RetrofitClient
+import com.example.plzhealth.data.entity.FoodCategoryEntity
 import com.example.plzhealth.data.toFoodItem
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import android.util.Log
+import android.widget.ImageView
 
 class SearchFragment : Fragment() {
 
-    private var foodList: List<FoodItem> = listOf()
-
-    private val majorCategories = listOf(
-        "전체",
-        "과자류·빵류 또는 떡류",
-        "즉석식품류",
-        "음료류",
-        "식육가공품 및 포장육",
-        "조미식품",
-        "농산가공식품류",
-        "수산가공식품류",
-        "절임류 또는 조림류",
-        "면류",
-        "유가공품류",
-        "코코아가공품류 또는 초콜릿류",
-        "식용유지류",
-        "빙과류",
-        "장류",
-        "두부류 또는 묵류",
-        "잼류",
-        "당류",
-        "알가공품류",
-        "주류",
-        "기타식품류"
-    )
-
-    private var selectedChip: TextView? = null
+    private enum class Step { MAJOR, MIDDLE, MINOR, RESULT }
+    private var currentStep = Step.MAJOR
+    private var selectedMajor = ""
+    private var selectedMiddle = ""
+    private var selectedMinor = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_search, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_search, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val etSearch = view.findViewById<EditText>(R.id.etSearch)
-        val rvAllFoods = view.findViewById<RecyclerView>(R.id.rvAllFoods)
+        val tvBack = view.findViewById<TextView>(R.id.tvBackCategory)
+        val rvGrid = view.findViewById<RecyclerView>(R.id.rvCategoryGrid)
+        val rvResult = view.findViewById<RecyclerView>(R.id.rvFoodResult)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val ivSearch = view.findViewById<ImageView>(R.id.ivSearch)
 
-        rvAllFoods.layoutManager = LinearLayoutManager(requireContext())
+        ivSearch.setOnClickListener {
+            val query = etSearch.text.toString().trim()
+            if (query.isNotEmpty()) goToFoodList(query)
+        }
 
-        // 칩 세팅
-        setupCategoryChips(view, rvAllFoods, progressBar)
+        rvGrid.layoutManager = GridLayoutManager(requireContext(), 3)
+        rvResult.layoutManager = LinearLayoutManager(requireContext())
 
-        loadInitialData("", rvAllFoods, progressBar)
+        tvBack.setOnClickListener {
+            when (currentStep) {
+                Step.MIDDLE -> showMajorStep(view)
+                Step.MINOR -> showMiddleStep(view, selectedMajor)
+                Step.RESULT -> showMinorStep(view, selectedMajor, selectedMiddle)
+                else -> {}
+            }
+        }
 
         etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -80,87 +72,142 @@ class SearchFragment : Fragment() {
                 true
             } else false
         }
-    }
 
-    private fun setupCategoryChips(view: View, rvAllFoods: RecyclerView, progressBar: ProgressBar?) {
-        val llChips = view.findViewById<LinearLayout>(R.id.llCategoryChips)
-
-        majorCategories.forEach { category ->
-            val chip = TextView(requireContext()).apply {
-                text = category
-                textSize = 13f
-                setPadding(14.dpToPx(), 8.dpToPx(), 14.dpToPx(), 8.dpToPx())
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { setMargins(0, 0, 8.dpToPx(), 0) }
-                layoutParams = params
-                isClickable = true
-                isFocusable = true
-
-                if (category == "전체") {
-                    setChipSelected(this)
-                    selectedChip = this
-                } else {
-                    setChipUnselected(this)
-                }
-
-                setOnClickListener {
-                    selectedChip?.let { setChipUnselected(it) }
-                    setChipSelected(this)
-                    selectedChip = this
-
-                    if (category == "전체") {
-                        loadInitialData("", rvAllFoods, progressBar)
-                    } else {
-                        goToFoodList(category)
-                    }
-                }
-            }
-            llChips.addView(chip)
+        viewLifecycleOwner.lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
+            initCategoriesIfNeeded()
+            progressBar.visibility = View.GONE
+            showMajorStep(view)
         }
     }
 
-    private fun setChipSelected(chip: TextView) {
-        chip.setBackgroundResource(R.drawable.bg_chip_selected)
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        chip.setTypeface(null, Typeface.BOLD)
+    private suspend fun initCategoriesIfNeeded() = withContext(Dispatchers.IO) {
+        val dao = AppDatabase.getDatabase(requireContext()).foodCategoryDao()
+        if (dao.getCount() > 0) return@withContext
+
+        try {
+            val response = RetrofitClient.service.getNutriInfo(
+                serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                foodName = null,
+                numOfRows = 500
+            )
+            val items = response.response.body?.items ?: return@withContext
+
+            val categories = items
+                .filter { !it.category.isNullOrBlank() && !it.subCategory.isNullOrBlank() && !it.minorCategory.isNullOrBlank() }
+                .map {
+                    FoodCategoryEntity(
+                        major = it.category!!,
+                        middle = it.subCategory!!,
+                        minor = it.minorCategory!!
+                    )
+                }
+                .distinctBy { "${it.major}|${it.middle}|${it.minor}" }
+
+            if (categories.isEmpty()) {
+                Log.e("SearchFragment", "카테고리 없음 - API 응답 확인 필요")
+                return@withContext
+            }
+
+            dao.insertAll(categories)
+            Log.d("SearchFragment", "카테고리 저장 완료: ${categories.size}개")
+        } catch (e: Exception) {
+            Log.e("SearchFragment", "카테고리 초기화 실패: ${e.message}")
+        }
     }
 
-    private fun setChipUnselected(chip: TextView) {
-        chip.setBackgroundResource(R.drawable.bg_chip_unselected)
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.GoodBlack))
-        chip.setTypeface(null, Typeface.NORMAL)
-    }
+    private fun showMajorStep(view: View) {
+        currentStep = Step.MAJOR
+        view.findViewById<TextView>(R.id.tvCategoryStep).text = "대분류 선택"
+        view.findViewById<TextView>(R.id.tvBackCategory).visibility = View.GONE
+        view.findViewById<RecyclerView>(R.id.rvFoodResult).visibility = View.GONE
+        val rvGrid = view.findViewById<RecyclerView>(R.id.rvCategoryGrid)
+        rvGrid.visibility = View.VISIBLE
 
-    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
-
-    private fun loadInitialData(keyword: String?, recyclerView: RecyclerView, progressBar: ProgressBar?) {
-        progressBar?.visibility = View.VISIBLE
         viewLifecycleOwner.lifecycleScope.launch {
+            val majors = withContext(Dispatchers.IO) {
+                AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMajor()
+            }
+            rvGrid.adapter = CategoryGridAdapter(majors) { selected ->
+                selectedMajor = selected
+                showMiddleStep(view, selected)
+            }
+        }
+    }
+
+    private fun showMiddleStep(view: View, major: String) {
+        currentStep = Step.MIDDLE
+        view.findViewById<TextView>(R.id.tvCategoryStep).text = "$major > 중분류 선택"
+        view.findViewById<TextView>(R.id.tvBackCategory).visibility = View.VISIBLE
+        val rvGrid = view.findViewById<RecyclerView>(R.id.rvCategoryGrid)
+        rvGrid.visibility = View.VISIBLE
+        view.findViewById<RecyclerView>(R.id.rvFoodResult).visibility = View.GONE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val middles = withContext(Dispatchers.IO) {
+                AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMiddle(major)
+            }
+            rvGrid.adapter = CategoryGridAdapter(middles) { selected ->
+                selectedMiddle = selected
+                showMinorStep(view, major, selected)
+            }
+        }
+    }
+
+    private fun showMinorStep(view: View, major: String, middle: String) {
+        currentStep = Step.MINOR
+        view.findViewById<TextView>(R.id.tvCategoryStep).text = "$major > $middle > 소분류 선택"
+        view.findViewById<TextView>(R.id.tvBackCategory).visibility = View.VISIBLE
+        val rvGrid = view.findViewById<RecyclerView>(R.id.rvCategoryGrid)
+        rvGrid.visibility = View.VISIBLE
+        view.findViewById<RecyclerView>(R.id.rvFoodResult).visibility = View.GONE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val minors = withContext(Dispatchers.IO) {
+                AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMinor(major, middle)
+            }
+            rvGrid.adapter = CategoryGridAdapter(minors) { selected ->
+                selectedMinor = selected
+                showResultStep(view, selected)
+            }
+        }
+    }
+
+    private fun showResultStep(view: View, query: String) {
+        currentStep = Step.RESULT
+        view.findViewById<TextView>(R.id.tvCategoryStep).text = "$selectedMajor > $selectedMiddle > $query"
+        view.findViewById<TextView>(R.id.tvBackCategory).visibility = View.VISIBLE
+        view.findViewById<RecyclerView>(R.id.rvCategoryGrid).visibility = View.GONE
+        val rvResult = view.findViewById<RecyclerView>(R.id.rvFoodResult)
+        rvResult.visibility = View.VISIBLE
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             try {
                 val response = RetrofitClient.service.getNutriInfo(
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                    foodName = null,
-                    numOfRows = 20
+                    foodName = query
                 )
-                val apiItems = response.response.body.items ?: emptyList()
-                foodList = apiItems.map { it.toFoodItem() }
-                recyclerView.adapter = FoodAdapter(foodList) { food -> goToDetail(food) }
+                val foods = response.response.body?.items?.map { it.toFoodItem() } ?: emptyList()
+                rvResult.adapter = FoodAdapter(
+                    foodList = foods,
+                    onItemClick = { food ->
+                        goToDetail(food)
+                    },
+                    onItemLongClick = null
+                )
             } catch (e: Exception) {
-                Log.e("SearchFragment", "에러: ${e.message}")
+                Log.e("SearchFragment", "식품 조회 실패: ${e.message}")
             } finally {
-                progressBar?.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
         }
     }
 
     private fun goToFoodList(query: String) {
         val fragment = FoodListFragment().apply {
-            arguments = Bundle().apply {
-                putString("query", query)
-                putInt("defaultType", arguments?.getInt("defaultType") ?: 0)
-            }
+            arguments = Bundle().apply { putString("query", query) }
         }
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
@@ -170,9 +217,7 @@ class SearchFragment : Fragment() {
 
     private fun goToDetail(food: FoodItem) {
         val fragment = FoodDetailFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable("selectedFood", food)
-            }
+            arguments = Bundle().apply { putParcelable("selectedFood", food) }
         }
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)

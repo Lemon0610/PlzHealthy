@@ -6,7 +6,7 @@ import retrofit2.http.Query
 interface NutriApiService {
     @GET("tn_pubr_public_nutri_process_info_api")
     suspend fun getNutriInfo(
-        @Query("serviceKey", encoded = true) serviceKey: String,
+        @Query("serviceKey") serviceKey: String,
         @Query("type") type: String = "json",
         @Query("foodNm") foodName: String?,
         @Query("pageNo") pageNo: Int = 1,

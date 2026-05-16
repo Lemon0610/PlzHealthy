@@ -62,7 +62,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
             val diseaseList = myInfo?.diseases?.split(", ")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList()
 
             try {
-                val searchKeyword = if (baseCategory.isNotBlank()) baseCategory else baseName.take(2)
+                val searchKeyword = when {
+                    baseCategory.isNotBlank() -> baseCategory
+                    baseName.length >= 2 -> baseName.substring(0, 2)
+                    baseName.isNotBlank() -> baseName
+                    else -> "식품"
+                }
 
                 val response = RetrofitClient.service.getNutriInfo(
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
@@ -70,7 +75,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                     numOfRows = 100
                 )
 
-                val apiItems = response.response.body.items ?: emptyList()
+                val apiItems = response.response.body?.items ?: emptyList()
                 val foods = apiItems.map { it.toFoodItem() }
 
                 if (food != null) {
@@ -208,7 +213,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                     }
                 }
             } catch (e: Exception) {
-                showErrorOnFirstCard(cards[0], "오류 발생", "데이터를 가져오지 못했습니다.")
+                android.util.Log.e("RecommendDebug", "추천 로드 중 에러 발생: ${e.message}", e)
+                showErrorOnFirstCard(cards[0], "오류 발생", "데이터를 가져오지 못했습니다.\n(${e.localizedMessage})")
             }
         }
     }

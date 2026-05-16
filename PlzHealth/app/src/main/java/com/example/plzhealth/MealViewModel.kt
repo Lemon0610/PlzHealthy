@@ -13,6 +13,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class SelectedMeal(
+    val id: Int,
     val food: FoodItem,
     val mealType: String
 )
@@ -36,6 +37,7 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
             val entities = mealDao.getMealsByDate(todayDate)
             val list = entities.map { entity ->
                 SelectedMeal(
+                    id = entity.id,
                     food = FoodItem(
                         code = entity.code,
                         name = entity.foodName,
@@ -48,7 +50,8 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
                         sodium = entity.sodium,
                         saturatedFat = entity.saturatedFat,
                         category = entity.category,
-                        subCategory = entity.subCategory
+                        subCategory = entity.subCategory,
+                        minorCategory = entity.minorCategory
                     ),
                     mealType = entity.mealType
                 )
@@ -73,9 +76,17 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
                 saturatedFat = food.saturatedFat,
                 category = food.category,
                 subCategory = food.subCategory,
+                minorCategory = food.minorCategory,
                 code = food.code
             )
             mealDao.insert(entity)
+            loadTodayMeals()
+        }
+    }
+
+    fun deleteMeal(mealId: Int) {
+        viewModelScope.launch {
+            mealDao.deleteMealById(mealId)
             loadTodayMeals()
         }
     }

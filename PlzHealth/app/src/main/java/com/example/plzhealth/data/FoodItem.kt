@@ -9,6 +9,7 @@ data class FoodItem(
     val name: String,
     val category: String,
     val subCategory: String,
+    val minorCategory: String,
     val kcal: Double,
     val protein: Double,
     val fat: Double,
