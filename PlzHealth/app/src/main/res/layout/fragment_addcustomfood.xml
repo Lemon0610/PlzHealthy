@@ -28,7 +28,42 @@
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
             android:inputType="text"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="섭취량 선택"
+            android:textColor="@color/GoodBlack"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerServingAmount"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp" />
+
+        <EditText
+            android:id="@+id/etServingGram"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:hint="직접 입력(g)"
+            android:inputType="numberDecimal"
+            android:textColor="@color/GoodBlack"
+            android:textColorHint="@color/LightBlack"
+            android:textSize="16sp"
+            android:autofillHints="none" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="아래 영양성분은 선택한 섭취량 기준으로 작성해주세요."
+            android:textColor="@color/LightBlack"
+            android:textSize="12sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,7 +71,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/foodCate"
             android:textStyle="bold"
-            android:textColor="@color/GoodBlack"/>
+            android:textColor="@color/GoodBlack" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,38 +81,39 @@
 
             <Spinner
                 android:id="@+id/spinnerMajor"
+                style="@style/Widget.AppCompat.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                style="@style/Widget.AppCompat.Spinner"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinnerMiddle"
+                style="@style/Widget.AppCompat.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
-                style="@style/Widget.AppCompat.Spinner"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinnerMinor"
+                style="@style/Widget.AppCompat.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
-                style="@style/Widget.AppCompat.Spinner"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown" />
         </LinearLayout>
 
         <EditText
             android:id="@+id/etKcal"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginTop="12dp"
             android:hint="@string/Kcal"
             android:inputType="numberDecimal"
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <EditText
             android:id="@+id/etProtein"
@@ -88,7 +124,7 @@
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <EditText
             android:id="@+id/etSugar"
@@ -99,7 +135,7 @@
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <EditText
             android:id="@+id/etFiber"
@@ -110,7 +146,7 @@
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <EditText
             android:id="@+id/etSodium"
@@ -121,7 +157,7 @@
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <EditText
             android:id="@+id/etSaturatedFat"
@@ -132,7 +168,7 @@
             android:textColor="@color/GoodBlack"
             android:textColorHint="@color/LightBlack"
             android:textSize="16sp"
-            android:autofillHints="none"/>
+            android:autofillHints="none" />
 
         <Spinner
             android:id="@+id/spinnerMealType"

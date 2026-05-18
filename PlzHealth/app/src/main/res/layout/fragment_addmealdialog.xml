@@ -43,21 +43,58 @@
         android:layout_marginTop="20dp"
         android:text="@string/tvPopupFoodName"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/GoodBlack" />
 
     <TextView
         android:id="@+id/tvPopupFoodKcal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/tvPopupFoodKcal" />
+        android:text="@string/tvPopupFoodKcal"
+        android:textColor="@color/LightBlack" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="섭취량 선택"
+        android:textStyle="bold"
+        android:textColor="@color/GoodBlack" />
+
+    <Spinner
+        android:id="@+id/spinnerServingAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/etServingGram"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="직접 입력(g)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:textColor="@color/GoodBlack"
+        android:textColorHint="@color/LightBlack" />
+
+    <TextView
+        android:id="@+id/tvServingGuide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="기본 1인분은 100g 기준으로 계산됩니다."
+        android:textColor="@color/LightBlack"
+        android:textSize="12sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/spinnerMealType"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/GoodBlack" />
 
     <Spinner
         android:id="@+id/spinnerMealType"
@@ -74,4 +111,5 @@
         android:text="@string/btnConfirmAdd"
         android:backgroundTint="@color/MainGreen"
         android:textColor="@color/white" />
+
 </LinearLayout>
