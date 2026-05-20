@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F9F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 상단 그린 헤더 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#4CAF50"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="36dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/foodAdd"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:letterSpacing="0.03"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="직접 식품 정보를 입력하세요"
+                android:textSize="13sp"
+                android:textColor="#C8E6C9"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="-20dp">
+
+            <!-- 식품 이름 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="식품 정보"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#212121"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F5F5F5"
+                        android:layout_marginBottom="14dp"/>
+
+                    <!-- 식품 이름 라벨 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="식품 이름"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etFoodName"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/foodName"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:inputType="text"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 카테고리 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="식품 카테고리"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#212121"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F5F5F5"
+                        android:layout_marginBottom="14dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="대분류"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginBottom="6dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerMajor"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_spinner_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:spinnerMode="dropdown"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="중분류"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerMiddle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_spinner_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:spinnerMode="dropdown"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="소분류"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerMinor"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_spinner_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:spinnerMode="dropdown"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 영양소 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="영양소 정보 (100g 기준)"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#212121"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F5F5F5"
+                        android:layout_marginBottom="14dp"/>
+
+                    <!-- 칼로리 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="칼로리 (Kcal)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etKcal"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/Kcal"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <!-- 단백질 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="단백질 (g)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etProtein"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/danger"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <!-- 당류 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="당류 (g)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etSugar"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/etSugar"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <!-- 식이섬유 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="식이섬유 (g)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etFiber"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/etFiber"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <!-- 나트륨 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="나트륨 (mg)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etSodium"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/etSodium"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <!-- 포화지방 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="포화지방 (g)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
+                        android:id="@+id/etSaturatedFat"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/etSaturatedFat"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 식사 유형 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="식사 유형"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="#212121"
+                        android:layout_marginBottom="12dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F5F5F5"
+                        android:layout_marginBottom="14dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="끼니 선택"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginBottom="6dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerMealType"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_spinner_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:spinnerMode="dropdown"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 추가 버튼 -->
+            <Button
+                android:id="@+id/btnAddFood"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="28dp"
+                android:backgroundTint="#4CAF50"
+                android:text="@string/addToMeal"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
