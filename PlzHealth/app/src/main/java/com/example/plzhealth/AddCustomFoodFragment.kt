@@ -21,7 +21,6 @@ import java.util.Locale
 class AddCustomFoodFragment : Fragment() {
 
     private val viewModel: MealViewModel by activityViewModels()
-
     private val db by lazy { AppDatabase.getDatabase(requireContext()) }
 
     private val servingOptions = listOf(
@@ -46,6 +45,7 @@ class AddCustomFoodFragment : Fragment() {
         val etFoodName = view.findViewById<EditText>(R.id.etFoodName)
         val spinnerServingAmount = view.findViewById<Spinner>(R.id.spinnerServingAmount)
         val etServingGram = view.findViewById<EditText>(R.id.etServingGram)
+
         val etKcal = view.findViewById<EditText>(R.id.etKcal)
         val etProtein = view.findViewById<EditText>(R.id.etProtein)
         val etSugar = view.findViewById<EditText>(R.id.etSugar)
@@ -70,33 +70,12 @@ class AddCustomFoodFragment : Fragment() {
         etServingGram.isEnabled = false
 
         spinnerServingAmount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                itemView: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parent: AdapterView<*>?, itemView: View?, position: Int, id: Long) {
                 when (position) {
-                    0 -> {
-                        etServingGram.setText("100")
-                        etServingGram.isEnabled = false
-                    }
-
-                    1 -> {
-                        etServingGram.setText("50")
-                        etServingGram.isEnabled = false
-                    }
-
-                    2 -> {
-                        etServingGram.setText("33")
-                        etServingGram.isEnabled = false
-                    }
-
-                    3 -> {
-                        etServingGram.setText("25")
-                        etServingGram.isEnabled = false
-                    }
-
+                    0 -> { etServingGram.setText("100"); etServingGram.isEnabled = false }
+                    1 -> { etServingGram.setText("50"); etServingGram.isEnabled = false }
+                    2 -> { etServingGram.setText("33"); etServingGram.isEnabled = false }
+                    3 -> { etServingGram.setText("25"); etServingGram.isEnabled = false }
                     4 -> {
                         etServingGram.setText("")
                         etServingGram.hint = "직접 입력(g)"
@@ -105,7 +84,6 @@ class AddCustomFoodFragment : Fragment() {
                     }
                 }
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
@@ -143,6 +121,11 @@ class AddCustomFoodFragment : Fragment() {
 
                         viewLifecycleOwner.lifecycleScope.launch {
                             val middleList = db.foodCategoryDao().getDistinctMiddle(selectedMajor)
+                            spinnerMiddle.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, middleList)
+
+                            spinnerMiddle.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                                    val selectedMiddle = middleList.getOrNull(pos) ?: "미분류"
 
                             spinnerMiddle.adapter = ArrayAdapter(
                                 requireContext(),
@@ -205,6 +188,12 @@ class AddCustomFoodFragment : Fragment() {
                     "섭취량을 올바르게 입력해주세요.",
                     Toast.LENGTH_SHORT
                 ).show()
+                return@setOnClickListener
+            }
+
+            val servingGram = etServingGram.text.toString().trim().toDoubleOrNull() ?: 100.0
+            if (servingGram <= 0.0) {
+                Toast.makeText(requireContext(), "섭취량을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

@@ -15,12 +15,23 @@
     <string name="dinner">저녁</string>
     <string name="AddMeal">+ 식품 추가</string>
     <string name="foodAdd">직접 식품 추가</string>
+    <string name="addWhy">직접 식품 정보를 입력하세요</string>
+    <string name="aboutFood">식품 정보</string>
+    <string name="foodHow">섭취량 선택</string>
     <string name="foodName">식품 이름</string>
-    <string name="foodCate">식품 카테고리 선택</string>
+    <string name="selfGram">직접 입력(g)</string>
+    <string name="selfHow">아래 영양성분은 선택한 섭취량 기준으로 작성해주세요.</string>
+    <string name="foodCate">식품 카테고리</string>
+    <string name="bigFood">대분류</string>
+    <string name="midFood">중분류</string>
+    <string name="smlFood">소분류</string>
+    <string name="aboutDetail">영양소 정보</string>
     <string name="etSugar">당류 (g)</string>
     <string name="etFiber">식이섬유 (g)</string>
     <string name="etSodium">나트륨 (mg)</string>
     <string name="etSaturatedFat">포화지방 (g)</string>
+    <string name="howToEat">식사 유형</string>
+    <string name="whenEat">끼니 선택</string>
 
     <string name="health_point_log_title">건강점수 일지</string>
     <string name="health_log_default_date">2026년 05월 03일</string>
@@ -60,6 +71,7 @@
     <string name="Close">닫기</string>
     <string name="tvPopupFoodName">식품명</string>
     <string name="tvPopupFoodKcal">0 Kcal</string>
+    <string name="standard">기본 1인분은 100g 기준으로 계산됩니다.</string>
     <string name="spinnerMealType">식사 유형</string>
     <string name="btnConfirmAdd">담기</string>
     <string name="ganji">⇄</string>

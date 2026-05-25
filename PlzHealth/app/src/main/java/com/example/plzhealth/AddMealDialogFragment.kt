@@ -87,26 +87,10 @@ class AddMealDialogFragment : DialogFragment() {
                 id: Long
             ) {
                 when (position) {
-                    0 -> {
-                        etServingGram.setText("100")
-                        etServingGram.isEnabled = false
-                    }
-
-                    1 -> {
-                        etServingGram.setText("50")
-                        etServingGram.isEnabled = false
-                    }
-
-                    2 -> {
-                        etServingGram.setText("33")
-                        etServingGram.isEnabled = false
-                    }
-
-                    3 -> {
-                        etServingGram.setText("25")
-                        etServingGram.isEnabled = false
-                    }
-
+                    0 -> { etServingGram.setText("100"); etServingGram.isEnabled = false }
+                    1 -> { etServingGram.setText("50"); etServingGram.isEnabled = false }
+                    2 -> { etServingGram.setText("33"); etServingGram.isEnabled = false }
+                    3 -> { etServingGram.setText("25"); etServingGram.isEnabled = false }
                     4 -> {
                         etServingGram.setText("")
                         etServingGram.hint = "직접 입력(g)"
@@ -115,7 +99,6 @@ class AddMealDialogFragment : DialogFragment() {
                     }
                 }
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
@@ -160,10 +143,7 @@ class AddMealDialogFragment : DialogFragment() {
         }
     }
 
-    private fun adjustFoodByServingGram(
-        food: FoodItem,
-        servingGram: Double
-    ): FoodItem {
+    private fun adjustFoodByServingGram(food: FoodItem, servingGram: Double): FoodItem {
         val ratio = servingGram / 100.0
         val servingText = formatServingGram(servingGram)
 

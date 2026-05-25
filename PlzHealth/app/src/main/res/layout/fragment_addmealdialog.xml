@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="섭취량 선택"
+        android:text="@string/foodHow"
         android:textStyle="bold"
         android:textColor="@color/GoodBlack" />
 
@@ -73,18 +73,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="직접 입력(g)"
+        android:hint="@string/selfGram"
         android:inputType="numberDecimal"
         android:maxLines="1"
         android:textColor="@color/GoodBlack"
-        android:textColorHint="@color/LightBlack" />
+        android:textColorHint="@color/LightBlack"
+        android:autofillHints="none"/>
 
     <TextView
         android:id="@+id/tvServingGuide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="기본 1인분은 100g 기준으로 계산됩니다."
+        android:text="@string/standard"
         android:textColor="@color/LightBlack"
         android:textSize="12sp" />
 
