@@ -173,9 +173,9 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun showResultStep(view: View, query: String) {
+    private fun showResultStep(view: View, minorCategory: String) {
         currentStep = Step.RESULT
-        view.findViewById<TextView>(R.id.tvCategoryStep).text = "$selectedMajor > $selectedMiddle > $query"
+        view.findViewById<TextView>(R.id.tvCategoryStep).text = "$selectedMajor > $selectedMiddle > $minorCategory"
         view.findViewById<TextView>(R.id.tvBackCategory).visibility = View.VISIBLE
         view.findViewById<RecyclerView>(R.id.rvCategoryGrid).visibility = View.GONE
         val rvResult = view.findViewById<RecyclerView>(R.id.rvFoodResult)
@@ -185,24 +185,50 @@ class SearchFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             progressBar.visibility = View.VISIBLE
             try {
-                val response = RetrofitClient.service.getNutriInfo(
+                // ✅ 핵심 수정: foodNm 대신 카테고리 파라미터로 검색
+                val response = RetrofitClient.service.getNutriInfoByCategory(
                     serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                    foodName = query
+                    majorCategory = selectedMajor,
+                    subCategory = selectedMiddle,
+                    minorCategory = minorCategory
                 )
-                val foods = response.response.body?.items?.map { it.toFoodItem() } ?: emptyList()
-                rvResult.adapter = FoodAdapter(
-                    foodList = foods,
-                    onItemClick = { food ->
-                        goToDetail(food)
-                    },
-                    onItemLongClick = null
-                )
+                val foods = response.response.body?.items
+                    ?.map { it.toFoodItem() }
+                    ?.filter { it.name.isNotBlank() && it.name != "알 수 없는 식품" }
+                    ?.distinctBy { it.name }
+                    ?: emptyList()
+
+                Log.d("SearchFragment", "카테고리 검색 결과: ${foods.size}개 (소분류: $minorCategory)")
+
+                if (foods.isEmpty()) {
+                    // 카테고리 API 결과 없으면 식품명으로 폴백 검색
+                    val fallback = RetrofitClient.service.getNutriInfo(
+                        serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                        foodName = minorCategory
+                    )
+                    val fallbackFoods = fallback.response.body?.items
+                        ?.map { it.toFoodItem() }
+                        ?.filter { it.name.isNotBlank() && it.name != "알 수 없는 식품" }
+                        ?.distinctBy { it.name }
+                        ?: emptyList()
+                    setFoodResult(rvResult, fallbackFoods)
+                } else {
+                    setFoodResult(rvResult, foods)
+                }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "식품 조회 실패: ${e.message}")
             } finally {
                 progressBar.visibility = View.GONE
             }
         }
+    }
+
+    private fun setFoodResult(rvResult: RecyclerView, foods: List<FoodItem>) {
+        rvResult.adapter = FoodAdapter(
+            foodList = foods,
+            onItemClick = { food -> goToDetail(food) },
+            onItemLongClick = null
+        )
     }
 
     private fun goToFoodList(query: String) {

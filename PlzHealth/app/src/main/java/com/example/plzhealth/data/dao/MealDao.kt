@@ -9,6 +9,7 @@ interface MealDao {
     suspend fun getMealsByDate(date: String): List<MealEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+
     suspend fun insert(meal: MealEntity)
 
     @Query("DELETE FROM meal_table WHERE id = :mealId")

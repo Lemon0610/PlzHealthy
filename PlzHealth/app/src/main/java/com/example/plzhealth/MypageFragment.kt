@@ -35,11 +35,11 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
         loadData()
 
         cardMyInfo.setOnClickListener {
-            navigateToDetail(0,true)
+            navigateToDetail(0, true)
         }
 
         view.findViewById<Button>(R.id.memberAdd).setOnClickListener {
-            navigateToDetail(0,false)
+            navigateToDetail(0, false)
         }
     }
 
@@ -62,13 +62,14 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
         viewLifecycleOwner.lifecycleScope.launch {
             val myInfo = db.userDao().getMyInfo(true)
             if (myInfo != null) {
-                tvMyName.text = "이름: ${myInfo.name}"
-                tvMyAgeGender.text = "나이: ${DateUtils.calculateAge(myInfo.birthDate)} (${myInfo.gender})"
-                tvMyAllergies.text = "알러지: ${myInfo.allergies}"
+                // 새 레이아웃: 라벨 열 고정이므로 값만 표시
+                tvMyName.text = myInfo.name
+                tvMyAgeGender.text = "${DateUtils.calculateAge(myInfo.birthDate)}세 (${myInfo.gender})"
+                tvMyAllergies.text = if (myInfo.allergies.isNullOrBlank()) "없음" else myInfo.allergies
             } else {
-                tvMyName.text = "내 정보를 등록해주세요"
-                tvMyAgeGender.text = ""
-                tvMyAllergies.text = ""
+                tvMyName.text = "미등록"
+                tvMyAgeGender.text = "-"
+                tvMyAllergies.text = "탭하여 정보를 등록하세요"
             }
 
             val members = db.userDao().getMembers(false)
@@ -88,9 +89,5 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
             .replace(R.id.fragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 }

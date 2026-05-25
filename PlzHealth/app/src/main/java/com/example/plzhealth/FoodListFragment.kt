@@ -57,6 +57,7 @@ class FoodListFragment : Fragment() {
                 )
                 val apiItems = response.response.body?.items ?: emptyList()
                 val foodItems = apiItems.map { it.toFoodItem() }
+                    .distinctBy { it.name }
 
                 if (foodItems.isEmpty()) {
                     tvNoResult.visibility = View.VISIBLE
@@ -79,7 +80,7 @@ class FoodListFragment : Fragment() {
                                 .replace(R.id.fragmentContainer, fragment)
                                 .addToBackStack(null)
                                 .commit()
-                            },
+                        },
                         onItemLongClick = { }
                     )
                 }
