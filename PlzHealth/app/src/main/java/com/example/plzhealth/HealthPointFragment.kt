@@ -54,6 +54,24 @@ class HealthPointFragment : Fragment() {
         tvDate.text = LocalDate.now()
             .format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
+        viewModel.loadDailyScores()
+
+        viewModel.dailyScores.observe(viewLifecycleOwner) { dailyScores ->
+            if (dailyScores.isEmpty()) {
+                setupChart(lineChart, listOf(0), listOf("오늘"), showValues = false)
+            } else {
+                val scores = dailyScores.map { it.score }
+                val labels = dailyScores.map { formatChartDate(it.date) }
+
+                setupChart(
+                    chart = lineChart,
+                    scores = scores,
+                    labels = labels,
+                    showValues = true
+                )
+            }
+        }
+
         viewModel.selectedMeals.observe(viewLifecycleOwner) { meals ->
             if (meals.isEmpty()) {
                 tvAverageScore.text = "0점"
@@ -63,8 +81,6 @@ class HealthPointFragment : Fragment() {
                 tvLunch.text = "점심 | 기록 없음"
                 tvDinner.text = "저녁 | 기록 없음"
                 tvTip.text = defaultHealthTips.random()
-
-                setupChart(lineChart, listOf(0), listOf("오늘"), showValues = false)
                 return@observe
             }
 
@@ -76,12 +92,6 @@ class HealthPointFragment : Fragment() {
             val lunchMeals = meals.filter { it.mealType == "점심" }
             val dinnerMeals = meals.filter { it.mealType == "저녁" }
 
-            val chartData = buildMealChartData(
-                breakfastMeals = breakfastMeals,
-                lunchMeals = lunchMeals,
-                dinnerMeals = dinnerMeals
-            )
-
             tvAverageScore.text = "${averageScore}점"
             tvSummary.text = getSummaryMessage(averageScore)
             tvRisk.text = getRiskMessage(meals)
@@ -89,40 +99,7 @@ class HealthPointFragment : Fragment() {
             tvLunch.text = makeMealLogText("점심", lunchMeals)
             tvDinner.text = makeMealLogText("저녁", dinnerMeals)
             tvTip.text = getHealthTipByMeals(meals, averageScore)
-
-            setupChart(lineChart, chartData.scores, chartData.labels, showValues = true)
         }
-    }
-
-    private data class ChartData(
-        val scores: List<Int>,
-        val labels: List<String>
-    )
-
-    private fun buildMealChartData(
-        breakfastMeals: List<SelectedMeal>,
-        lunchMeals: List<SelectedMeal>,
-        dinnerMeals: List<SelectedMeal>
-    ): ChartData {
-        val scores = mutableListOf<Int>()
-        val labels = mutableListOf<String>()
-
-        getMealAverageScore(breakfastMeals)?.let {
-            scores.add(it)
-            labels.add("아침")
-        }
-
-        getMealAverageScore(lunchMeals)?.let {
-            scores.add(it)
-            labels.add("점심")
-        }
-
-        getMealAverageScore(dinnerMeals)?.let {
-            scores.add(it)
-            labels.add("저녁")
-        }
-
-        return ChartData(scores, labels)
     }
 
     private fun calculateFoodScore(selectedMeal: SelectedMeal): Int {
@@ -136,21 +113,16 @@ class HealthPointFragment : Fragment() {
         )
     }
 
-    private fun getMealAverageScore(meals: List<SelectedMeal>): Int? {
-        if (meals.isEmpty()) return null
-
-        return meals.map { calculateFoodScore(it) }
-            .average()
-            .toInt()
-    }
-
     private fun setupChart(
         chart: LineChart,
         scores: List<Int>,
         labels: List<String>,
         showValues: Boolean
     ) {
-        val entries = scores.mapIndexed { index, score ->
+        val safeScores = if (scores.isEmpty()) listOf(0) else scores
+        val safeLabels = if (labels.isEmpty()) listOf("오늘") else labels
+
+        val entries = safeScores.mapIndexed { index, score ->
             Entry(index.toFloat(), score.toFloat())
         }
 
@@ -194,10 +166,10 @@ class HealthPointFragment : Fragment() {
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.xAxis.granularity = 1f
         chart.xAxis.axisMinimum = -0.25f
-        chart.xAxis.axisMaximum = if (scores.size == 1) {
+        chart.xAxis.axisMaximum = if (safeScores.size == 1) {
             0.25f
         } else {
-            scores.size - 1 + 0.25f
+            safeScores.size - 1 + 0.25f
         }
         chart.xAxis.setDrawGridLines(false)
         chart.xAxis.setDrawAxisLine(false)
@@ -205,7 +177,7 @@ class HealthPointFragment : Fragment() {
         chart.xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 val index = value.toInt()
-                return labels.getOrNull(index) ?: ""
+                return safeLabels.getOrNull(index) ?: ""
             }
         }
 
@@ -234,6 +206,17 @@ class HealthPointFragment : Fragment() {
         }
 
         return "$mealName | ${averageScore}점 | $foodNames"
+    }
+
+    private fun formatChartDate(date: String): String {
+        return try {
+            LocalDate.parse(
+                date,
+                DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+            ).format(DateTimeFormatter.ofPattern("MM/dd"))
+        } catch (e: Exception) {
+            date
+        }
     }
 
     private fun getSummaryMessage(score: Int): String {

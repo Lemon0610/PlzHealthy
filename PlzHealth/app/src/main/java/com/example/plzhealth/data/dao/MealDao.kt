@@ -5,11 +5,14 @@ import com.example.plzhealth.data.entity.MealEntity
 
 @Dao
 interface MealDao {
+
     @Query("SELECT * FROM meal_table WHERE date = :date")
     suspend fun getMealsByDate(date: String): List<MealEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Query("SELECT * FROM meal_table ORDER BY date ASC")
+    suspend fun getAllMeals(): List<MealEntity>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(meal: MealEntity)
 
     @Query("DELETE FROM meal_table WHERE id = :mealId")

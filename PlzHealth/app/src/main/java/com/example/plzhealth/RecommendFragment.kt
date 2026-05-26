@@ -78,29 +78,36 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                 ?: emptyList()
 
             try {
-                val searchKeywords = listOf(
-                    baseSubCategory,
-                    baseCategory,
-                    baseName.take(2),
-                    "식품"
-                ).filter { it.isNotBlank() }.distinct()
+                val searchKeywords = buildRecommendationSearchKeywords(
+                    baseName = baseName,
+                    baseCategory = baseCategory,
+                    baseSubCategory = baseSubCategory
+                )
 
-                var foods = emptyList<FoodItem>()
+                val foods = mutableListOf<FoodItem>()
 
                 for (keyword in searchKeywords) {
-                    val response = RetrofitClient.service.getNutriInfo(
-                        serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                        foodName = keyword,
-                        numOfRows = 100
-                    )
+                    try {
+                        val response = RetrofitClient.service.getNutriInfo(
+                            serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                            foodName = keyword,
+                            numOfRows = 100
+                        )
 
-                    val apiItems = response.response.body?.items ?: emptyList()
-                    foods = apiItems.map { it.toFoodItem() }
-
-                    if (foods.isNotEmpty()) break
+                        val apiItems = response.response.body?.items ?: emptyList()
+                        foods.addAll(apiItems.map { it.toFoodItem() })
+                    } catch (e: Exception) {
+                        android.util.Log.e(
+                            "RecommendDebug",
+                            "검색어 [$keyword] 추천 후보 로드 실패: ${e.message}",
+                            e
+                        )
+                    }
                 }
 
-                if (foods.isEmpty()) {
+                val distinctFoods = foods.distinctBy { cleanDisplayName(it.name) }
+
+                if (distinctFoods.isEmpty()) {
                     layoutGuideBox.visibility = View.GONE
                     showErrorOnFirstCard(cards[0], "데이터 없음", "추천할 식품이 없습니다.")
                     hideEmptyCards(cards, 1)
@@ -109,10 +116,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
                 val normalizedBaseCategory = normalizeText(baseCategory)
                 val normalizedBaseSubCategory = normalizeText(baseSubCategory)
-                val cleanedBaseName = cleanDisplayName(baseName)
 
-                val scoredFoods = foods
-                    .filter { item -> cleanDisplayName(item.name) != cleanedBaseName }
+                val scoredFoods = distinctFoods
+                    .filter { item -> !isSameFoodName(baseName, item.name) }
                     .filter { item -> !containsAllergy(item, allergyList) }
                     .map { item ->
                         val score = HealthScore.calculateScore(
@@ -131,34 +137,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                         normalizedBaseSubCategory.isNotBlank() &&
                                 normalizeText(item.subCategory) == normalizedBaseSubCategory
                     }
-                    .sortedWith(
-                        recommendComparator(
-                            baseScore = baseScore,
-                            baseSodium = baseSodium,
-                            baseSugar = baseSugar,
-                            baseFat = baseSaturatedFat,
-                            baseProtein = baseProtein,
-                            baseFiber = baseFiber,
-                            baseKcal = baseKcal
-                        )
-                    )
+                    .sortedWith(recommendComparator(baseScore, baseSodium, baseSugar, baseSaturatedFat, baseProtein, baseFiber, baseKcal))
 
                 val sameCategoryFoods = scoredFoods
                     .filter { (item, _) ->
                         normalizedBaseCategory.isNotBlank() &&
                                 normalizeText(item.category) == normalizedBaseCategory
                     }
-                    .sortedWith(
-                        recommendComparator(
-                            baseScore = baseScore,
-                            baseSodium = baseSodium,
-                            baseSugar = baseSugar,
-                            baseFat = baseSaturatedFat,
-                            baseProtein = baseProtein,
-                            baseFiber = baseFiber,
-                            baseKcal = baseKcal
-                        )
-                    )
+                    .sortedWith(recommendComparator(baseScore, baseSodium, baseSugar, baseSaturatedFat, baseProtein, baseFiber, baseKcal))
 
                 val betterNutritionFoods = scoredFoods
                     .filter { (item, score) ->
@@ -172,17 +158,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                                                 item.fiber >= baseFiber
                                         )
                     }
-                    .sortedWith(
-                        recommendComparator(
-                            baseScore = baseScore,
-                            baseSodium = baseSodium,
-                            baseSugar = baseSugar,
-                            baseFat = baseSaturatedFat,
-                            baseProtein = baseProtein,
-                            baseFiber = baseFiber,
-                            baseKcal = baseKcal
-                        )
-                    )
+                    .sortedWith(recommendComparator(baseScore, baseSodium, baseSugar, baseSaturatedFat, baseProtein, baseFiber, baseKcal))
+
+                val fallbackFoods = scoredFoods
+                    .sortedWith(recommendComparator(baseScore, baseSodium, baseSugar, baseSaturatedFat, baseProtein, baseFiber, baseKcal))
 
                 val rawRecommended: List<Pair<FoodItem, Int>>
                 val headerMessage: String
@@ -190,27 +169,32 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                 when {
                     sameSubCategoryFoods.any { (_, score) -> score >= baseScore } -> {
                         rawRecommended = sameSubCategoryFoods.filter { (_, score) -> score >= baseScore }
-                        headerMessage = "같은 소분류 안에서 현재 식품보다 건강점수가 같거나 높은 식품을 추천합니다."
+                        headerMessage = "현재 식품과 유사한 후보 중 건강점수와 주요 영양성분을 기준으로 추천합니다."
                     }
 
                     sameSubCategoryFoods.isNotEmpty() -> {
                         rawRecommended = sameSubCategoryFoods
-                        headerMessage = "같은 소분류 안에서 영양성분과 건강점수를 기준으로 참고 후보를 추천합니다."
+                        headerMessage = "현재 식품과 유사한 후보 중 영양성분과 건강점수를 기준으로 참고 후보를 추천합니다."
                     }
 
                     sameCategoryFoods.any { (_, score) -> score >= baseScore } -> {
                         rawRecommended = sameCategoryFoods.filter { (_, score) -> score >= baseScore }
-                        headerMessage = "같은 대분류 안에서 현재 식품보다 건강점수가 같거나 높은 식품을 추천합니다."
+                        headerMessage = "같은 식품군 후보 중 현재 식품보다 건강점수가 같거나 높은 식품을 추천합니다."
                     }
 
                     sameCategoryFoods.isNotEmpty() -> {
                         rawRecommended = sameCategoryFoods
-                        headerMessage = "같은 대분류 안에서 영양성분과 건강점수를 기준으로 참고 후보를 추천합니다."
+                        headerMessage = "같은 식품군 후보 중 영양성분과 건강점수를 기준으로 참고 후보를 추천합니다."
                     }
 
                     betterNutritionFoods.isNotEmpty() -> {
                         rawRecommended = betterNutritionFoods
-                        headerMessage = "카테고리 비교 데이터가 부족하여, 주요 영양성분과 건강점수를 기준으로 참고 후보를 추천합니다."
+                        headerMessage = "카테고리 비교 데이터가 부족하여, 건강점수와 주요 영양성분을 기준으로 참고 후보를 추천합니다."
+                    }
+
+                    fallbackFoods.isNotEmpty() -> {
+                        rawRecommended = fallbackFoods
+                        headerMessage = "추천 후보 중 건강점수와 주요 영양성분을 기준으로 참고 식품을 추천합니다."
                     }
 
                     else -> {
@@ -221,6 +205,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
                 val recommended = selectFinalRecommendations(
                     candidates = rawRecommended,
+                    backupCandidates = fallbackFoods,
                     baseScore = baseScore,
                     limit = 3
                 )
@@ -292,15 +277,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         }.thenByDescending { (_, score) ->
             score
         }.thenByDescending { (item, _) ->
-            nutritionImproveCount(
-                item = item,
-                baseSodium = baseSodium,
-                baseSugar = baseSugar,
-                baseFat = baseFat,
-                baseProtein = baseProtein,
-                baseFiber = baseFiber,
-                baseKcal = baseKcal
-            )
+            nutritionImproveCount(item, baseSodium, baseSugar, baseFat, baseProtein, baseFiber, baseKcal)
         }.thenBy { (item, _) ->
             item.sodium
         }.thenBy { (item, _) ->
@@ -401,60 +378,45 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         if (rec.fiber > bFiber) reasons.add("식이섬유가 많고")
 
         if (reasons.isEmpty()) {
-            return "카테고리와 전체 영양성분을 비교했을 때 참고할 수 있는 후보입니다."
+            return "건강점수와 전체 영양성분을 비교했을 때 참고할 수 있는 후보입니다."
         }
 
-        val reasonText = reasons
-            .take(3)
-            .joinToString(" ")
+        val reasonText = reasons.take(3).joinToString(" ")
 
-        return "기준 식품보다 $reasonText 더 적절한 선택입니다."
+        return "현재 식품보다 $reasonText 더 적절한 선택입니다."
     }
 
     private fun selectFinalRecommendations(
         candidates: List<Pair<FoodItem, Int>>,
+        backupCandidates: List<Pair<FoodItem, Int>>,
         baseScore: Int,
         limit: Int
     ): List<Pair<FoodItem, Int>> {
-        val sorted = candidates.sortedWith(
+        val result = mutableListOf<Pair<FoodItem, Int>>()
+        val seenNames = mutableSetOf<String>()
+
+        val primary = candidates.sortedWith(
             compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
                 .thenByDescending { it.second }
                 .thenBy { abs(it.second - baseScore) }
         )
 
-        val result = mutableListOf<Pair<FoodItem, Int>>()
-        val seenBrandGroups = mutableSetOf<String>()
-        var perfectScoreAdded = false
+        val backup = backupCandidates.sortedWith(
+            compareByDescending<Pair<FoodItem, Int>> { it.second >= baseScore }
+                .thenByDescending { it.second }
+                .thenBy { abs(it.second - baseScore) }
+        )
 
-        for (item in sorted) {
-            val food = item.first
-            val score = item.second
-            val brandKey = getBrandGroupKey(food.name)
+        for (item in primary + backup) {
+            val nameKey = cleanDisplayName(item.first.name)
 
-            if (brandKey.isNotBlank() && seenBrandGroups.contains(brandKey)) continue
-            if (score == 100 && perfectScoreAdded) continue
+            if (nameKey.isBlank()) continue
+            if (seenNames.contains(nameKey)) continue
 
-            if (brandKey.isNotBlank()) seenBrandGroups.add(brandKey)
-            if (score == 100) perfectScoreAdded = true
-
+            seenNames.add(nameKey)
             result.add(item)
 
             if (result.size == limit) break
-        }
-
-        if (result.size < limit) {
-            for (item in sorted) {
-                if (result.contains(item)) continue
-
-                val score = item.second
-
-                if (score == 100 && perfectScoreAdded) continue
-                if (score == 100) perfectScoreAdded = true
-
-                result.add(item)
-
-                if (result.size == limit) break
-            }
         }
 
         return result
@@ -475,7 +437,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
     }
 
     private fun containsAllergy(food: FoodItem, allergies: List<String>): Boolean {
-        val target = "${food.name} ${food.category} ${food.subCategory}"
+        val target = "${food.name} ${food.category} ${food.subCategory} ${food.minorCategory}"
 
         return allergies.any { allergy ->
             target.contains(allergy, ignoreCase = true)
@@ -507,23 +469,76 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
         return messages.joinToString("\n")
     }
 
-    private fun getBrandGroupKey(name: String): String {
-        val cleaned = cleanDisplayName(name)
-            .replace(Regex("[^가-힣a-zA-Z0-9 ]"), "")
+    private fun buildRecommendationSearchKeywords(
+        baseName: String,
+        baseCategory: String,
+        baseSubCategory: String
+    ): List<String> {
+        val cleanedName = cleanDisplayName(baseName)
+
+        val categoryKeywords = when {
+            baseCategory.contains("면") || baseSubCategory.contains("면") ->
+                listOf("국수", "우동", "냉면", "쌀국수", "파스타", "라면")
+
+            baseCategory.contains("밥") ||
+                    baseSubCategory.contains("밥") ||
+                    cleanedName.contains("김밥") ->
+                listOf("비빔밥", "볶음밥", "주먹밥", "김밥", "덮밥", "죽")
+
+            baseCategory.contains("빵") || baseSubCategory.contains("빵") ->
+                listOf("식빵", "베이글", "샌드위치", "모닝빵", "호밀빵", "토스트")
+
+            baseCategory.contains("음료") || baseSubCategory.contains("음료") ->
+                listOf("주스", "차", "커피", "우유", "두유", "요거트")
+
+            baseCategory.contains("과자") || baseSubCategory.contains("과자") ->
+                listOf("과자", "스낵", "쿠키", "비스킷", "크래커", "요거트", "두유")
+
+            baseCategory.contains("유가공") ||
+                    baseSubCategory.contains("우유") ||
+                    baseSubCategory.contains("유제품") ->
+                listOf("우유", "요거트", "치즈", "두유", "두부")
+
+            baseCategory.contains("육") || baseSubCategory.contains("고기") ->
+                listOf("닭가슴살", "소고기", "돼지고기", "햄", "소시지", "두부")
+
+            baseCategory.contains("수산") || baseSubCategory.contains("생선") ->
+                listOf("생선", "참치", "고등어", "어묵", "연어")
+
+            else ->
+                listOf(cleanedName.take(2))
+        }
+
+        val commonBackupKeywords = listOf(
+            "두부",
+            "우유",
+            "요거트",
+            "샐러드",
+            "닭가슴살",
+            "비빔밥",
+            "국수",
+            "샌드위치"
+        )
+
+        return (categoryKeywords + commonBackupKeywords)
+            .filter { it.isNotBlank() }
+            .distinct()
+    }
+
+    private fun isSameFoodName(baseName: String, targetName: String): Boolean {
+        val base = cleanDisplayName(baseName)
+            .replace(Regex("\\([0-9.]+g\\)"), "")
+            .replace(" ", "")
             .trim()
 
-        if (cleaned.isBlank()) return ""
+        val target = cleanDisplayName(targetName)
+            .replace(Regex("\\([0-9.]+g\\)"), "")
+            .replace(" ", "")
+            .trim()
 
-        val firstToken = cleaned.split(" ")
-            .firstOrNull { it.isNotBlank() }
-            ?.trim()
-            ?: return ""
+        if (base.isBlank() || target.isBlank()) return false
 
-        return if (firstToken.length >= 2) {
-            firstToken.substring(0, 2)
-        } else {
-            firstToken
-        }
+        return base == target || target.contains(base) || base.contains(target)
     }
 
     private fun hideEmptyCards(cards: List<View>, count: Int) {
