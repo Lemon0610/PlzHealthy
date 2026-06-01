@@ -47,7 +47,6 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         etDetailMemo = view.findViewById(R.id.etDetailMemo)
         btnDelete = view.findViewById(R.id.btnDelete)
 
-        // 초기 남성 선택 상태
         rbMale.setBackgroundResource(R.drawable.bg_chip_selected)
         rbMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
@@ -59,6 +58,7 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
                     rbFemale.setBackgroundResource(R.drawable.bg_chip_unselected)
                     rbFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.GoodBlack))
                 }
+
                 R.id.rbFemale -> {
                     rbFemale.setBackgroundResource(R.drawable.bg_chip_selected)
                     rbFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
@@ -68,7 +68,6 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             }
         }
 
-        // 칩 체크박스 클릭 리스너
         setupChipCheckboxes(gridAllergies)
         setupChipCheckboxes(gridDiseases)
 
@@ -83,7 +82,8 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         etDetailBirth.doAfterTextChanged { text ->
             if (text?.length == 8) {
                 val rawDate = text.toString()
-                val formattedDate = "${rawDate.substring(0,4)}-${rawDate.substring(4,6)}-${rawDate.substring(6,8)}"
+                val formattedDate =
+                    "${rawDate.substring(0, 4)}-${rawDate.substring(4, 6)}-${rawDate.substring(6, 8)}"
                 tvDisplayAge.text = "연산된 나이: ${DateUtils.calculateAge(formattedDate)}"
             }
         }
@@ -111,16 +111,20 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
 
     private fun loadUserData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val user = if (isOwnerMode) db.userDao().getMyInfo()
-            else db.userDao().getUserById(userId)
+            val user = if (isOwnerMode) {
+                db.userDao().getMyInfo()
+            } else {
+                db.userDao().getUserById(userId)
+            }
 
             user?.let {
                 userId = it.id
+                saveSelectedUserId(it.id)
+
                 etDetailName.setText(it.name)
                 etDetailBirth.setText(it.birthDate)
                 etDetailMemo.setText(it.memo)
 
-                // 성별 칩 상태 업데이트
                 if (it.gender == "남성") {
                     rbMale.isChecked = true
                     rbMale.setBackgroundResource(R.drawable.bg_chip_selected)
@@ -162,7 +166,16 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         )
 
         lifecycleScope.launch {
-            db.userDao().insert(user)
+            val savedId = db.userDao().insert(user).toInt()
+
+            val selectedId = if (userId != 0) {
+                userId
+            } else {
+                savedId
+            }
+
+            saveSelectedUserId(selectedId)
+
             parentFragmentManager.popBackStack()
         }
     }
@@ -171,6 +184,12 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
         viewLifecycleOwner.lifecycleScope.launch {
             val user = db.userDao().getUserById(userId)
             user?.let { db.userDao().delete(it) }
+
+            val selectedUserId = getSelectedUserId()
+            if (selectedUserId == userId) {
+                clearSelectedUserId()
+            }
+
             parentFragmentManager.popBackStack()
         }
     }
@@ -196,5 +215,27 @@ class UserDetailFragment : Fragment(R.layout.fragment_user_detail) {
             }
         }
         return selected.joinToString(", ")
+    }
+
+    private fun saveSelectedUserId(id: Int) {
+        requireContext()
+            .getSharedPreferences("user_pref", 0)
+            .edit()
+            .putInt("SELECTED_USER_ID", id)
+            .apply()
+    }
+
+    private fun getSelectedUserId(): Int {
+        return requireContext()
+            .getSharedPreferences("user_pref", 0)
+            .getInt("SELECTED_USER_ID", -1)
+    }
+
+    private fun clearSelectedUserId() {
+        requireContext()
+            .getSharedPreferences("user_pref", 0)
+            .edit()
+            .remove("SELECTED_USER_ID")
+            .apply()
     }
 }

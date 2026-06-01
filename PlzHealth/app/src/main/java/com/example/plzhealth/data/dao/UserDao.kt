@@ -5,6 +5,7 @@ import com.example.plzhealth.data.entity.UserEntity
 
 @Dao
 interface UserDao {
+
     @Query("SELECT * FROM user_table WHERE isOwner = :isOwner LIMIT 1")
     suspend fun getMyInfo(isOwner: Boolean = true): UserEntity?
 
@@ -12,7 +13,7 @@ interface UserDao {
     suspend fun getMembers(isOwner: Boolean = false): List<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: UserEntity)
+    suspend fun insert(user: UserEntity): Long
 
     @Query("SELECT * FROM user_table WHERE id = :id")
     suspend fun getUserById(id: Int): UserEntity?

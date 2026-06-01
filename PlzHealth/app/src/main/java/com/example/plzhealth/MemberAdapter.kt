@@ -17,21 +17,29 @@ class MemberAdapter(
         private val tvMemberName: TextView = itemView.findViewById(R.id.tvMemberName)
         private val tvMemberAgeGender: TextView = itemView.findViewById(R.id.tvMemberAgeGender)
         private val tvMemberAllergies: TextView = itemView.findViewById(R.id.tvMemberAllergies)
+        private val tvMemberDiseases: TextView = itemView.findViewById(R.id.tvMemberDiseases)
 
         fun bind(user: UserEntity) {
-            tvMemberName.text = user.name
             val age = DateUtils.calculateAge(user.birthDate)
-            tvMemberAgeGender.text = " ($age / ${user.gender})"
-            tvMemberAllergies.text = "알러지: ${user.allergies.ifEmpty { "없음" }}"
 
-            itemView.setOnClickListener { onItemClick(user) }
+            tvMemberName.text = user.name
+            tvMemberAgeGender.text = "${age}세 / ${user.gender}"
+            tvMemberAllergies.text = "알레르기: ${formatHealthInfo(user.allergies)}"
+            tvMemberDiseases.text = "질환: ${formatHealthInfo(user.diseases)}"
+
+            itemView.setOnClickListener {
+                onItemClick(user)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_member, parent, false
+            R.layout.item_member,
+            parent,
+            false
         )
+
         return MemberViewHolder(view)
     }
 
@@ -42,7 +50,11 @@ class MemberAdapter(
     override fun getItemCount(): Int = members.size
 
     fun updateData(newMembers: List<UserEntity>) {
-        this.members = newMembers
+        members = newMembers
         notifyDataSetChanged()
+    }
+
+    private fun formatHealthInfo(value: String): String {
+        return if (value.isBlank()) "없음" else value
     }
 }
