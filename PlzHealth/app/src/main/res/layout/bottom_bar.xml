@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomBarRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnHealth"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
+            android:clickable="true"
+            android:focusable="true"
+
+            android:text="@string/btnHealth"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
+
+            app:drawableTopCompat="@drawable/outline_ecg_heart_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack"/>
+
+        <TextView
+            android:id="@+id/btnToday"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
+            android:clickable="true"
+            android:focusable="true"
+
+            android:text="@string/btnToday"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
+
+            app:drawableTopCompat="@drawable/outline_fork_spoon_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
+
+        <TextView
+            android:id="@+id/btnSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
+            android:clickable="true"
+            android:focusable="true"
+
+            android:text="@string/btnSearch"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
+
+            app:drawableTopCompat="@drawable/outline_search_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
+
+        <TextView
+            android:id="@+id/btnMypage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="6dp"
+            android:clickable="true"
+            android:focusable="true"
+
+            android:text="@string/btnMypage"
+            android:textSize="11sp"
+            android:textColor="@color/GoodBlack"
+
+            app:drawableTopCompat="@drawable/outline_home_24"
+            android:drawablePadding="2dp"
+            app:drawableTint="@color/GoodBlack" />
+
+    </LinearLayout>
+</LinearLayout>

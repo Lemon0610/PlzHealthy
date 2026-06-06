@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/tvCategoryItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="12.5sp"
+        android:textColor="#2E7D32"
+        android:textStyle="bold"
+        android:background="@drawable/bg_chip_unselected"
+        android:padding="10dp"
+        android:lineSpacingMultiplier="1.2"/>
+
+</FrameLayout>
