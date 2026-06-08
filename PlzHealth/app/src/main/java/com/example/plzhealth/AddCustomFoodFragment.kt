@@ -137,6 +137,8 @@ class AddCustomFoodFragment : Fragment() {
                                             minorList
                                         )
                                     }
+
+                                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                                 }
 
                                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -153,7 +155,25 @@ class AddCustomFoodFragment : Fragment() {
             val foodName = etFoodName.text.toString().trim()
 
             if (foodName.isEmpty()) {
-                Toast.makeText(requireContext(), "식품 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "식품 이름을 입력해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val servingGram = etServingGram.text
+                .toString()
+                .trim()
+                .toDoubleOrNull() ?: 100.0
+
+            if (servingGram <= 0.0) {
+                Toast.makeText(
+                    requireContext(),
+                    "섭취량을 올바르게 입력해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
@@ -187,9 +207,15 @@ class AddCustomFoodFragment : Fragment() {
             )
 
             val mealType = spinnerMealType.selectedItem.toString()
+
             viewModel.addMeal(food, mealType)
 
-            Toast.makeText(requireContext(), "식품이 추가되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "식품이 추가되었습니다.",
+                Toast.LENGTH_SHORT
+            ).show()
+
             parentFragmentManager.popBackStack()
         }
     }
