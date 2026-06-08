@@ -4,7 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +32,9 @@ class AddCustomFoodFragment : Fragment() {
     )
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_addcustomfood, container, false)
     }
@@ -41,6 +48,7 @@ class AddCustomFoodFragment : Fragment() {
 
         val etKcal = view.findViewById<EditText>(R.id.etKcal)
         val etProtein = view.findViewById<EditText>(R.id.etProtein)
+        val etCarbo = view.findViewById<EditText>(R.id.etCarbo)
         val etSugar = view.findViewById<EditText>(R.id.etSugar)
         val etFiber = view.findViewById<EditText>(R.id.etFiber)
         val etSodium = view.findViewById<EditText>(R.id.etSodium)
@@ -81,37 +89,61 @@ class AddCustomFoodFragment : Fragment() {
         }
 
         val mealTypes = listOf("아침", "점심", "저녁")
-        spinnerMealType.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, mealTypes)
+        spinnerMealType.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            mealTypes
+        )
+
         val defaultMealType = arguments?.getString("mealType") ?: "아침"
         val defaultIndex = mealTypes.indexOf(defaultMealType)
-        if (defaultIndex >= 0) spinnerMealType.setSelection(defaultIndex)
+        if (defaultIndex >= 0) {
+            spinnerMealType.setSelection(defaultIndex)
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             val majorList = db.foodCategoryDao().getDistinctMajor()
+
             if (majorList.isNotEmpty()) {
-                spinnerMajor.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, majorList)
+                spinnerMajor.adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    majorList
+                )
 
                 spinnerMajor.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    override fun onItemSelected(parent: AdapterView<*>?, itemView: View?, position: Int, id: Long) {
                         val selectedMajor = majorList[position]
 
                         viewLifecycleOwner.lifecycleScope.launch {
                             val middleList = db.foodCategoryDao().getDistinctMiddle(selectedMajor)
-                            spinnerMiddle.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, middleList)
+
+                            spinnerMiddle.adapter = ArrayAdapter(
+                                requireContext(),
+                                android.R.layout.simple_spinner_dropdown_item,
+                                middleList
+                            )
 
                             spinnerMiddle.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                                override fun onItemSelected(parent: AdapterView<*>?, itemView: View?, pos: Int, id: Long) {
                                     val selectedMiddle = middleList.getOrNull(pos) ?: "미분류"
 
                                     viewLifecycleOwner.lifecycleScope.launch {
                                         val minorList = db.foodCategoryDao().getDistinctMinor(selectedMajor, selectedMiddle)
-                                        spinnerMinor.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, minorList)
+
+                                        spinnerMinor.adapter = ArrayAdapter(
+                                            requireContext(),
+                                            android.R.layout.simple_spinner_dropdown_item,
+                                            minorList
+                                        )
                                     }
                                 }
+
                                 override fun onNothingSelected(parent: AdapterView<*>?) {}
                             }
                         }
                     }
+
                     override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
             }
@@ -126,6 +158,7 @@ class AddCustomFoodFragment : Fragment() {
             }
 
             val servingGram = etServingGram.text.toString().trim().toDoubleOrNull() ?: 100.0
+
             if (servingGram <= 0.0) {
                 Toast.makeText(requireContext(), "섭취량을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -145,8 +178,8 @@ class AddCustomFoodFragment : Fragment() {
                 minorCategory = selectedMinor,
                 kcal = etKcal.text.toString().toDoubleOrNull() ?: 0.0,
                 protein = etProtein.text.toString().toDoubleOrNull() ?: 0.0,
-                fat = 0.0,
-                carb = 0.0,
+                fat = etSaturatedFat.text.toString().toDoubleOrNull() ?: 0.0,
+                carb = etCarbo.text.toString().toDoubleOrNull() ?: 0.0,
                 sugar = etSugar.text.toString().toDoubleOrNull() ?: 0.0,
                 fiber = etFiber.text.toString().toDoubleOrNull() ?: 0.0,
                 sodium = etSodium.text.toString().toDoubleOrNull() ?: 0.0,

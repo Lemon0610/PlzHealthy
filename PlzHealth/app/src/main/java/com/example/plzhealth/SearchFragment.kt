@@ -32,6 +32,9 @@ class SearchFragment : Fragment() {
     private var selectedMiddle = ""
     private var selectedMinor = ""
 
+    private lateinit var categoryAdapter: CategoryGridAdapter
+    private lateinit var foodAdapter: FoodAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +57,12 @@ class SearchFragment : Fragment() {
         }
 
         rvGrid.layoutManager = GridLayoutManager(requireContext(), 3)
+        categoryAdapter = CategoryGridAdapter(emptyList()) {}
+        rvGrid.adapter = categoryAdapter
+
         rvResult.layoutManager = LinearLayoutManager(requireContext())
+        foodAdapter = FoodAdapter(emptyList(), { goToDetail(it) }, null)
+        rvResult.adapter = foodAdapter
 
         tvBack.setOnClickListener {
             when (currentStep) {
@@ -128,10 +136,11 @@ class SearchFragment : Fragment() {
             val majors = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMajor()
             }
-            rvGrid.adapter = CategoryGridAdapter(majors) { selected ->
+            categoryAdapter = CategoryGridAdapter(majors) { selected ->
                 selectedMajor = selected
                 showMiddleStep(view, selected)
             }
+            rvGrid.adapter = categoryAdapter
         }
     }
 
@@ -147,10 +156,11 @@ class SearchFragment : Fragment() {
             val middles = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMiddle(major)
             }
-            rvGrid.adapter = CategoryGridAdapter(middles) { selected ->
+            categoryAdapter = CategoryGridAdapter(middles) { selected ->
                 selectedMiddle = selected
                 showMinorStep(view, major, selected)
             }
+            rvGrid.adapter = categoryAdapter
         }
     }
 
@@ -166,10 +176,11 @@ class SearchFragment : Fragment() {
             val minors = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(requireContext()).foodCategoryDao().getDistinctMinor(major, middle)
             }
-            rvGrid.adapter = CategoryGridAdapter(minors) { selected ->
+            categoryAdapter = CategoryGridAdapter(minors) { selected ->
                 selectedMinor = selected
                 showResultStep(view, selected)
             }
+            rvGrid.adapter = categoryAdapter
         }
     }
 
@@ -182,16 +193,19 @@ class SearchFragment : Fragment() {
         rvResult.visibility = View.VISIBLE
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
 
+        setFoodResult(rvResult, emptyList())
+
         viewLifecycleOwner.lifecycleScope.launch {
             progressBar.visibility = View.VISIBLE
             try {
-                // ✅ 핵심 수정: foodNm 대신 카테고리 파라미터로 검색
-                val response = RetrofitClient.service.getNutriInfoByCategory(
-                    serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                    majorCategory = selectedMajor,
-                    subCategory = selectedMiddle,
-                    minorCategory = minorCategory
-                )
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.service.getNutriInfoByCategory(
+                        serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                        majorCategory = selectedMajor,
+                        subCategory = selectedMiddle,
+                        minorCategory = minorCategory
+                    )
+                }
                 val foods = response.response.body?.items
                     ?.map { it.toFoodItem() }
                     ?.filter { it.name.isNotBlank() && it.name != "알 수 없는 식품" }
@@ -201,11 +215,12 @@ class SearchFragment : Fragment() {
                 Log.d("SearchFragment", "카테고리 검색 결과: ${foods.size}개 (소분류: $minorCategory)")
 
                 if (foods.isEmpty()) {
-                    // 카테고리 API 결과 없으면 식품명으로 폴백 검색
-                    val fallback = RetrofitClient.service.getNutriInfo(
-                        serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                        foodName = minorCategory
-                    )
+                    val fallback = withContext(Dispatchers.IO) {
+                        RetrofitClient.service.getNutriInfo(
+                            serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                            foodName = minorCategory
+                        )
+                    }
                     val fallbackFoods = fallback.response.body?.items
                         ?.map { it.toFoodItem() }
                         ?.filter { it.name.isNotBlank() && it.name != "알 수 없는 식품" }
@@ -217,6 +232,7 @@ class SearchFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "식품 조회 실패: ${e.message}")
+                setFoodResult(rvResult, emptyList())
             } finally {
                 progressBar.visibility = View.GONE
             }
@@ -224,11 +240,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun setFoodResult(rvResult: RecyclerView, foods: List<FoodItem>) {
-        rvResult.adapter = FoodAdapter(
+        foodAdapter = FoodAdapter(
             foodList = foods,
             onItemClick = { food -> goToDetail(food) },
             onItemLongClick = null
         )
+        rvResult.adapter = foodAdapter
     }
 
     private fun goToFoodList(query: String) {

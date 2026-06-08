@@ -47,14 +47,14 @@ class FoodDetailFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvFoodName).text = food.name
         view.findViewById<TextView>(R.id.tvEnergy).text = food.kcal.toString()
         view.findViewById<TextView>(R.id.tvProtein).text = food.protein.toString()
-        view.findViewById<TextView>(R.id.tvFat).text = "${food.fat} g" //포화지방산
+        view.findViewById<TextView>(R.id.tvFat).text = "${food.saturatedFat} g" //포화지방산
         view.findViewById<TextView>(R.id.tvCarbo).text = "${food.carb} g" //탄수화물
         view.findViewById<TextView>(R.id.tvSugar).text = "${food.sugar} g" //당류
         view.findViewById<TextView>(R.id.tvFiber).text = "${food.fiber} g" //식이섬유
         view.findViewById<TextView>(R.id.tvSodium).text = "${food.sodium} mg" //나트륨
 
         view.findViewById<ProgressBar>(R.id.pbSodium).progress = (food.sodium / 10).toInt().coerceIn(0, 100)
-        view.findViewById<ProgressBar>(R.id.pbFat).progress = (food.fat * 2).toInt().coerceIn(0, 100)
+        view.findViewById<ProgressBar>(R.id.pbFat).progress = (food.saturatedFat * 2).toInt().coerceIn(0, 100)
         view.findViewById<ProgressBar>(R.id.pbSugar).progress = (food.sugar * 5).toInt().coerceIn(0, 100)
 
         view.findViewById<ImageButton>(R.id.btnBack).setOnClickListener {

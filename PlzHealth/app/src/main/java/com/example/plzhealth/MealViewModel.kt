@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter
 data class SelectedMeal(
     val id: Int,
     val food: FoodItem,
-    val mealType: String
+    val mealType: String,
+    val date: String
 )
 
 class MealViewModel(application: Application) : AndroidViewModel(application) {
@@ -28,8 +29,12 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
     private val _selectedMeals = MutableLiveData<MutableList<SelectedMeal>>(mutableListOf())
     val selectedMeals: LiveData<MutableList<SelectedMeal>> = _selectedMeals
 
+    private val _allMealsForGraph = MutableLiveData<List<SelectedMeal>>(emptyList())
+    val allMealsForGraph: LiveData<List<SelectedMeal>> = _allMealsForGraph
+
     init {
         loadTodayMeals()
+        loadAllMeals()
     }
 
     fun loadTodayMeals() {
@@ -53,10 +58,40 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
                         subCategory = entity.subCategory,
                         minorCategory = entity.minorCategory
                     ),
-                    mealType = entity.mealType
+                    mealType = entity.mealType,
+                    date = entity.date
                 )
             }.toMutableList()
             _selectedMeals.postValue(list)
+        }
+    }
+
+    fun loadAllMeals() {
+        viewModelScope.launch {
+            val entities = mealDao.getAllMeals()
+            val list = entities.map { entity ->
+                SelectedMeal(
+                    id = entity.id,
+                    food = FoodItem(
+                        code = entity.code,
+                        name = entity.foodName,
+                        kcal = entity.kcal,
+                        protein = entity.protein,
+                        fat = entity.fat,
+                        carb = entity.carb,
+                        sugar = entity.sugar,
+                        fiber = entity.fiber,
+                        sodium = entity.sodium,
+                        saturatedFat = entity.saturatedFat,
+                        category = entity.category,
+                        subCategory = entity.subCategory,
+                        minorCategory = entity.minorCategory
+                    ),
+                    mealType = entity.mealType,
+                    date = entity.date
+                )
+            }
+            _allMealsForGraph.postValue(list)
         }
     }
 
@@ -81,6 +116,7 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
             )
             mealDao.insert(entity)
             loadTodayMeals()
+            loadAllMeals()
         }
     }
 
@@ -88,6 +124,7 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             mealDao.deleteMealById(mealId)
             loadTodayMeals()
+            loadAllMeals()
         }
     }
 
@@ -95,6 +132,7 @@ class MealViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             mealDao.clearAll()
             _selectedMeals.postValue(mutableListOf())
+            _allMealsForGraph.postValue(emptyList())
         }
     }
 }

@@ -342,6 +342,30 @@
                         android:layout_marginBottom="6dp"/>
 
                     <EditText
+                        android:id="@+id/etCarbo"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="@string/etSugar"
+                        android:inputType="numberDecimal"
+                        android:textColor="#212121"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:autofillHints="none"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/etCarbo"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#9E9E9E"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp"/>
+
+                    <EditText
                         android:id="@+id/etSugar"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
