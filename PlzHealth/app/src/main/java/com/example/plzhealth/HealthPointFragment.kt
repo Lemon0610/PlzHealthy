@@ -41,6 +41,7 @@ class HealthPointFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 1. 모든 UI 뷰 컴포넌트 찾아오기
         val tvDate = view.findViewById<TextView>(R.id.tvHealthLogDate)
         val tvAverageScore = view.findViewById<TextView>(R.id.tvAverageHealthScore)
         val tvSummary = view.findViewById<TextView>(R.id.tvHealthSummary)
@@ -51,78 +52,86 @@ class HealthPointFragment : Fragment() {
         val tvTip = view.findViewById<TextView>(R.id.tvHealthLogTip)
         val lineChart = view.findViewById<LineChart>(R.id.lineChart)
 
-        tvDate.text = LocalDate.now()
-            .format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+        // 2. 상단 날짜 반영 (포맷: 2026년 06월 09일)
+        val todayStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+        tvDate.text = todayStr
 
-        viewModel.selectedMeals.observe(viewLifecycleOwner) { meals ->
-            if (meals.isEmpty()) {
+        // 3. 전체 식사 데이터 관찰 (역사 그래프 + 오늘 일지 분석 동시 처리)
+        viewModel.allMealsForGraph.observe(viewLifecycleOwner) { meals ->
+
+            // 데이터가 아예 없는 경우 빈 화면 예외 처리
+            if (meals == null || meals.isEmpty()) {
+                setEmptyState(tvAverageScore, tvSummary, tvRisk, tvBreakfast, tvLunch, tvDinner, tvTip)
+                setupChart(lineChart, listOf(0), listOf("오늘"), showValues = false)
+                return@observe
+            }
+
+            // [PART A] 날짜별 역사 그래프 데이터 빌드 로직
+            val groupedByDate: Map<String, List<SelectedMeal>> = meals.groupBy { it.date }
+            val scores = mutableListOf<Int>()
+            val labels = mutableListOf<String>()
+            val sortedDates = groupedByDate.keys.sortedBy { it }
+
+            for (date in sortedDates) {
+                val mealsInDate = groupedByDate[date] ?: continue
+                if (mealsInDate.isEmpty()) continue
+
+                val totalScore = mealsInDate.sumOf { calculateFoodScore(it) }
+                val avgScore = totalScore / mealsInDate.size
+                scores.add(avgScore)
+
+                // 그래프에 년도는 빼고 "06월 09일" 형태로 라벨링
+                val displayDate = date.replace("2026년 ", "")
+                labels.add(displayDate)
+            }
+            setupChart(lineChart, scores, labels, showValues = true)
+
+
+            // [PART B] '오늘 날짜'에 해당하는 식단만 필터링하여 하단 일지 컴포넌트 채우기
+            val todayMeals = meals.filter { it.date == todayStr }
+
+            if (todayMeals.isEmpty()) {
+                // 오늘 먹은 식사가 없다면 하단 정보만 초기화 (그래프는 유지)
                 tvAverageScore.text = "0점"
-                tvSummary.text = "아직 기록된 식단이 없습니다. 식품을 추가하면 건강점수 일지가 표시됩니다."
+                tvSummary.text = "아직 오늘 기록된 식단이 없습니다. 식품을 추가하면 건강점수 일지가 표시됩니다."
                 tvRisk.text = "현재 특별한 위험 요소가 없습니다."
                 tvBreakfast.text = "아침 | 기록 없음"
                 tvLunch.text = "점심 | 기록 없음"
                 tvDinner.text = "저녁 | 기록 없음"
                 tvTip.text = defaultHealthTips.random()
+            } else {
+                // 오늘 먹은 식사의 평균 점수 계산
+                val todayAverageScore = todayMeals.map { calculateFoodScore(it) }.average().toInt()
 
-                setupChart(lineChart, listOf(0), listOf("오늘"), showValues = false)
-                return@observe
+                // 식사 타임별 데이터 분류
+                val breakfastMeals = todayMeals.filter { it.mealType == "아침" }
+                val lunchMeals = todayMeals.filter { it.mealType == "점심" }
+                val dinnerMeals = todayMeals.filter { it.mealType == "저녁" }
+
+                // UI 데이터 반영
+                tvAverageScore.text = "${todayAverageScore}점"
+                tvSummary.text = getSummaryMessage(todayAverageScore)
+                tvRisk.text = getRiskMessage(todayMeals)
+                tvBreakfast.text = makeMealLogText("아침", breakfastMeals)
+                tvLunch.text = makeMealLogText("점심", lunchMeals)
+                tvDinner.text = makeMealLogText("저녁", dinnerMeals)
+                tvTip.text = getHealthTipByMeals(todayMeals, todayAverageScore)
             }
-
-            val averageScore = meals.map { calculateFoodScore(it) }
-                .average()
-                .toInt()
-
-            val breakfastMeals = meals.filter { it.mealType == "아침" }
-            val lunchMeals = meals.filter { it.mealType == "점심" }
-            val dinnerMeals = meals.filter { it.mealType == "저녁" }
-
-            val chartData = buildMealChartData(
-                breakfastMeals = breakfastMeals,
-                lunchMeals = lunchMeals,
-                dinnerMeals = dinnerMeals
-            )
-
-            tvAverageScore.text = "${averageScore}점"
-            tvSummary.text = getSummaryMessage(averageScore)
-            tvRisk.text = getRiskMessage(meals)
-            tvBreakfast.text = makeMealLogText("아침", breakfastMeals)
-            tvLunch.text = makeMealLogText("점심", lunchMeals)
-            tvDinner.text = makeMealLogText("저녁", dinnerMeals)
-            tvTip.text = getHealthTipByMeals(meals, averageScore)
-
-            setupChart(lineChart, chartData.scores, chartData.labels, showValues = true)
         }
     }
 
-    private data class ChartData(
-        val scores: List<Int>,
-        val labels: List<String>
-    )
-
-    private fun buildMealChartData(
-        breakfastMeals: List<SelectedMeal>,
-        lunchMeals: List<SelectedMeal>,
-        dinnerMeals: List<SelectedMeal>
-    ): ChartData {
-        val scores = mutableListOf<Int>()
-        val labels = mutableListOf<String>()
-
-        getMealAverageScore(breakfastMeals)?.let {
-            scores.add(it)
-            labels.add("아침")
-        }
-
-        getMealAverageScore(lunchMeals)?.let {
-            scores.add(it)
-            labels.add("점심")
-        }
-
-        getMealAverageScore(dinnerMeals)?.let {
-            scores.add(it)
-            labels.add("저녁")
-        }
-
-        return ChartData(scores, labels)
+    // 전체 덤프 데이터가 아예 없을 때의 텍스트 초기화 유틸 함수
+    private fun setEmptyState(
+        score: TextView, summary: TextView, risk: TextView,
+        bf: TextView, lh: TextView, dn: TextView, tip: TextView
+    ) {
+        score.text = "0점"
+        summary.text = "아직 기록된 식단이 없습니다. 식품을 추가하면 건강점수 일지가 표시됩니다."
+        risk.text = "현재 특별한 위험 요소가 없습니다."
+        bf.text = "아침 | 기록 없음"
+        lh.text = "점심 | 기록 없음"
+        dn.text = "저녁 | 기록 없음"
+        tip.text = defaultHealthTips.random()
     }
 
     private fun calculateFoodScore(selectedMeal: SelectedMeal): Int {
@@ -134,14 +143,6 @@ class HealthPointFragment : Fragment() {
             fiber = selectedMeal.food.fiber,
             kcal = selectedMeal.food.kcal
         )
-    }
-
-    private fun getMealAverageScore(meals: List<SelectedMeal>): Int? {
-        if (meals.isEmpty()) return null
-
-        return meals.map { calculateFoodScore(it) }
-            .average()
-            .toInt()
     }
 
     private fun setupChart(
@@ -157,11 +158,9 @@ class HealthPointFragment : Fragment() {
         val dataSet = LineDataSet(entries, "건강점수").apply {
             color = Color.parseColor("#4CAF50")
             lineWidth = 3f
-
             setCircleColor(Color.parseColor("#4CAF50"))
             circleRadius = 4.5f
             circleHoleRadius = 2.2f
-
             setDrawValues(showValues)
             valueTextSize = 9f
             valueTextColor = Color.parseColor("#333333")
@@ -170,20 +169,16 @@ class HealthPointFragment : Fragment() {
                     return "${entry?.y?.toInt() ?: 0}점"
                 }
             }
-
             setDrawFilled(true)
             fillColor = Color.parseColor("#A5D6A7")
             fillAlpha = 55
-
             mode = LineDataSet.Mode.LINEAR
         }
 
         chart.data = LineData(dataSet)
-
         chart.description.isEnabled = false
         chart.legend.isEnabled = false
         chart.axisRight.isEnabled = false
-
         chart.axisLeft.axisMinimum = 0f
         chart.axisLeft.axisMaximum = 100f
         chart.axisLeft.textSize = 9f
@@ -194,11 +189,7 @@ class HealthPointFragment : Fragment() {
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.xAxis.granularity = 1f
         chart.xAxis.axisMinimum = -0.25f
-        chart.xAxis.axisMaximum = if (scores.size == 1) {
-            0.25f
-        } else {
-            scores.size - 1 + 0.25f
-        }
+        chart.xAxis.axisMaximum = if (scores.size == 1) 0.25f else scores.size - 1 + 0.25f
         chart.xAxis.setDrawGridLines(false)
         chart.xAxis.setDrawAxisLine(false)
         chart.xAxis.textSize = 10f
@@ -212,27 +203,16 @@ class HealthPointFragment : Fragment() {
         chart.setExtraOffsets(28f, 38f, 28f, 10f)
         chart.setTouchEnabled(false)
         chart.setPinchZoom(false)
-
         chart.animateY(700)
         chart.invalidate()
     }
 
-    private fun makeMealLogText(
-        mealName: String,
-        meals: List<SelectedMeal>
-    ): String {
+    private fun makeMealLogText(mealName: String, meals: List<SelectedMeal>): String {
         if (meals.isEmpty()) {
             return "$mealName | 기록 없음"
         }
-
-        val averageScore = meals.map { calculateFoodScore(it) }
-            .average()
-            .toInt()
-
-        val foodNames = meals.joinToString(", ") {
-            it.food.name
-        }
-
+        val averageScore = meals.map { calculateFoodScore(it) }.average().toInt()
+        val foodNames = meals.joinToString(", ") { it.food.name }
         return "$mealName | ${averageScore}점 | $foodNames"
     }
 
@@ -259,10 +239,7 @@ class HealthPointFragment : Fragment() {
         }
     }
 
-    private fun getHealthTipByMeals(
-        meals: List<SelectedMeal>,
-        averageScore: Int
-    ): String {
+    private fun getHealthTipByMeals(meals: List<SelectedMeal>, averageScore: Int): String {
         val totalSodium = meals.sumOf { it.food.sodium }
         val totalSugar = meals.sumOf { it.food.sugar }
         val totalKcal = meals.sumOf { it.food.kcal }
@@ -291,5 +268,10 @@ class HealthPointFragment : Fragment() {
             else ->
                 "비슷한 식품이라도 영양성분 차이가 있을 수 있습니다. 식품 선택 시 나트륨, 당류, 포화지방 함량을 함께 비교해보세요."
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadAllMeals()
     }
 }

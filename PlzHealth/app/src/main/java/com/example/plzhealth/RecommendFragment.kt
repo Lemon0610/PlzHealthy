@@ -13,6 +13,8 @@ import com.example.plzhealth.data.toFoodItem
 import com.example.plzhealth.utils.HealthScore
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import javax.net.ssl.SSLException
+import java.io.IOException
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
@@ -44,6 +46,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
         val baseCategory = food?.category ?: arguments?.getString("category") ?: ""
         val baseSubCategory = food?.subCategory ?: arguments?.getString("subCategory") ?: ""
+        val baseMinorCategory = food?.minorCategory ?: arguments?.getString("minorCategory") ?: "" // (혹시 FoodItem 내부 필드명이 다르면 맞춰주세요!)
         val baseName = food?.name ?: arguments?.getString("baseName") ?: ""
 
         val baseSodium = food?.sodium ?: arguments?.getDouble("sodium") ?: 0.0
@@ -78,26 +81,34 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
                 ?: emptyList()
 
             try {
-                val searchKeywords = listOf(
-                    baseSubCategory,
-                    baseCategory,
-                    baseName.take(2),
-                    "식품"
-                ).filter { it.isNotBlank() }.distinct()
-
                 var foods = emptyList<FoodItem>()
+                val cleanName = baseName.replace(Regex("[^가-힣a-zA-Z0-9 ]"), "").trim()
+                val nameKeyword = cleanName.split(" ").firstOrNull { it.length >= 2 } ?: cleanName.take(2)
 
-                for (keyword in searchKeywords) {
+                if (nameKeyword.isNotBlank()) {
+                    android.util.Log.d("RecommendDebug", "1순위 이름 검색 시도 키워드: $nameKeyword")
                     val response = RetrofitClient.service.getNutriInfo(
                         serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
-                        foodName = keyword,
+                        foodName = nameKeyword,
                         numOfRows = 100
                     )
-
                     val apiItems = response.response.body?.items ?: emptyList()
                     foods = apiItems.map { it.toFoodItem() }
+                }
 
-                    if (foods.isNotEmpty()) break
+                val cleanedBaseName = cleanDisplayName(baseName)
+                val otherCandidates = foods.filter { cleanDisplayName(it.name) != cleanedBaseName }
+                if (otherCandidates.size < 3) {
+                    android.util.Log.d("RecommendDebug", "1순위 결과 중 다른 상품이 부족함(${otherCandidates.size}개) -> 2순위 카테고리 전체 조회 강제 실행 ($baseCategory > $baseSubCategory > $baseMinorCategory)")
+
+                    val response = RetrofitClient.service.getNutriInfoByCategory(
+                        serviceKey = "4c0f8f4bc35efbe5d599f6c900f3475171464a453d2f1ad7ba568ffa5a15087b",
+                        majorCategory = baseCategory,
+                        subCategory = baseSubCategory,
+                        minorCategory = baseMinorCategory
+                    )
+                    val apiItems = response.response.body?.items ?: emptyList()
+                    foods = apiItems.map { it.toFoodItem() }
                 }
 
                 if (foods.isEmpty()) {
@@ -109,7 +120,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
 
                 val normalizedBaseCategory = normalizeText(baseCategory)
                 val normalizedBaseSubCategory = normalizeText(baseSubCategory)
-                val cleanedBaseName = cleanDisplayName(baseName)
 
                 val scoredFoods = foods
                     .filter { item -> cleanDisplayName(item.name) != cleanedBaseName }
@@ -272,7 +282,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend) {
             } catch (e: Exception) {
                 android.util.Log.e("RecommendDebug", "추천 로드 중 에러 발생: ${e.message}", e)
                 layoutGuideBox.visibility = View.GONE
-                showErrorOnFirstCard(cards[0], "오류 발생", "데이터를 가져오지 못했습니다.\n(${e.localizedMessage})")
+
+                val userFriendlyReason = if (e is SSLException || e is IOException) {
+                    "일시적 통신 오류 발생. 잠시 후 다시 시도해주세요"
+                } else {
+                    "데이터를 가져오지 못했습니다.\n(${e.localizedMessage})"
+                }
+
+                showErrorOnFirstCard(cards[0], "오류 발생", userFriendlyReason)
                 hideEmptyCards(cards, 1)
             }
         }

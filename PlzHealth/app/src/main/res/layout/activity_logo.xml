@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#EAF5F0">
 
-    <TextView
-        android:id="@+id/logo_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="30sp"
-        android:textStyle="bold"
+    <ImageView
+        android:id="@+id/logo_image"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:src="@drawable/logo"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +27,7 @@
         android:max="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_text"
+        app:layout_constraintTop_toBottomOf="@+id/logo_image"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

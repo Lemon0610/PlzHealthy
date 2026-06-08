@@ -13,7 +13,6 @@ interface NutriApiService {
         @Query("numOfRows") numOfRows: Int = 50
     ): NutriResponse
 
-    // 카테고리(소분류)로 검색 — foodLv6Nm 파라미터 사용
     @GET("tn_pubr_public_nutri_process_info_api")
     suspend fun getNutriInfoByCategory(
         @Query("serviceKey") serviceKey: String,

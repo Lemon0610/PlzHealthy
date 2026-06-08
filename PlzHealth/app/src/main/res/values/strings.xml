@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PlzHealth</string>
+    <string name="app_name">Balancy</string>
     <string name="btnHealth">건강점수</string>
     <string name="btnToday">오늘의 식단</string>
     <string name="btnSearch">검색</string>
@@ -26,6 +26,7 @@
     <string name="midFood">중분류</string>
     <string name="smlFood">소분류</string>
     <string name="aboutDetail">영양소 정보</string>
+    <string name="etCarbo">탄수화물 (g)</string>
     <string name="etSugar">당류 (g)</string>
     <string name="etFiber">식이섬유 (g)</string>
     <string name="etSodium">나트륨 (mg)</string>
